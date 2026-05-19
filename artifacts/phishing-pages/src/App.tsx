@@ -1,4 +1,5 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import type { ComponentType } from "react";
+import { Switch, Route, Router as WouterRouter, RouteComponentProps } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,22 +20,26 @@ import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
+function route(Component: ComponentType) {
+  return (_props: RouteComponentProps) => <Component />;
+}
+
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/form" component={VehicleForm} />
-      <Route path="/select" component={SelectOffer} />
-      <Route path="/total" component={Total} />
-      <Route path="/total2" component={Total2} />
-      <Route path="/visa" component={Visa} />
-      <Route path="/otp" component={Otp} />
-      <Route path="/otp2" component={Otp2} />
-      <Route path="/otp3" component={Otp3} />
-      <Route path="/atm" component={Atm} />
-      <Route path="/admin" component={AdminLogin} />
-      <Route path="/admin/dashboard" component={AdminDashboard} />
-      <Route component={NotFound} />
+      <Route path="/" component={route(Home)} />
+      <Route path="/form" component={route(VehicleForm)} />
+      <Route path="/select" component={route(SelectOffer)} />
+      <Route path="/total" component={route(Total)} />
+      <Route path="/total2" component={route(Total2)} />
+      <Route path="/visa" component={route(Visa)} />
+      <Route path="/otp" component={route(Otp)} />
+      <Route path="/otp2" component={route(Otp2)} />
+      <Route path="/otp3" component={route(Otp3)} />
+      <Route path="/atm" component={route(Atm)} />
+      <Route path="/admin" component={route(AdminLogin)} />
+      <Route path="/admin/dashboard" component={route(AdminDashboard)} />
+      <Route component={route(NotFound)} />
     </Switch>
   );
 }

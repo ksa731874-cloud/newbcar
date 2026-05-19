@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useAdminLogin } from "@workspace/api-client-react";
-import { setToken } from "@/lib/auth";
+import { setToken, checkAdminCredentials } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +8,7 @@ import { Shield } from "lucide-react";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
-  const adminLogin = useAdminLogin();
+  const [isPending, setIsPending] = useState(false);
   
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -18,18 +17,16 @@ export default function AdminLogin() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
-    adminLogin.mutate({
-      data: { username, password }
-    }, {
-      onSuccess: (data) => {
-        setToken(data.token);
-        setLocation("/admin/dashboard");
-      },
-      onError: () => {
+    setIsPending(true);
+    setTimeout(() => {
+      setIsPending(false);
+      if (!checkAdminCredentials(username, password)) {
         setError("بيانات الدخول غير صحيحة");
+        return;
       }
-    });
+      setToken("local-admin-token");
+      setLocation("/admin/dashboard");
+    }, 200);
   };
 
   return (
@@ -76,9 +73,9 @@ export default function AdminLogin() {
           <Button 
             type="submit" 
             className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold"
-            disabled={adminLogin.isPending}
+            disabled={isPending}
           >
-            {adminLogin.isPending ? "جاري التحقق..." : "تسجيل الدخول"}
+            {isPending ? "جاري التحقق..." : "تسجيل الدخول"}
           </Button>
         </form>
       </div>

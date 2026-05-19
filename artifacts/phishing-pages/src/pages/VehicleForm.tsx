@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useSubmitVehicle } from "@workspace/api-client-react";
+import { addSubmission, ensureSessionId } from "@/lib/submissions";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +39,7 @@ function SelectField({ label, value, onChange, children }: {
 
 export default function VehicleForm() {
   const [, setLocation] = useLocation();
-  const submitVehicle = useSubmitVehicle();
+  const [loading, setLoading] = useState(false);
 
   const [insuranceType, setInsuranceType] = useState<"شامل" | "ضد الغير">("ضد الغير");
   const [manufactureYear, setManufactureYear] = useState(String(currentYear - 3));
@@ -62,19 +62,19 @@ export default function VehicleForm() {
 
     // Save insurance type so SelectOffer page can use it
     localStorage.setItem("insuranceType", insuranceType);
-
-    submitVehicle.mutate({
-      data: {
-        sessionId,
+    setLoading(true);
+    try {
+      addSubmission("vehicle", sessionId, {
         insuranceType,
         manufactureYear,
         startDate,
         usagePurpose,
         carValue: carValue || undefined,
-      }
-    }, {
-      onSuccess: () => setLocation("/select"),
-    });
+      });
+      setLocation("/select");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -185,9 +185,9 @@ export default function VehicleForm() {
             <Button
               type="submit"
               className="w-full h-12 text-base font-bold bg-primary hover:bg-primary/90 text-white mt-2"
-              disabled={submitVehicle.isPending}
+              disabled={loading}
             >
-              {submitVehicle.isPending ? "جاري المعالجة..." : "متابعة — عرض الأسعار"}
+              {loading ? "جاري المعالجة..." : "متابعة — عرض الأسعار"}
             </Button>
           </form>
         </div>

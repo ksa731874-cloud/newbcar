@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useSubmitInitial } from "@workspace/api-client-react";
+import { addSubmission, ensureSessionId } from "@/lib/submissions";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,7 +41,6 @@ function SelectField({ label, value, onChange, children }: {
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const submitInitial = useSubmitInitial();
 
   const [activeTab, setActiveTab] = useState("مركبات");
   const [formType, setFormType] = useState<"تأمين جديد" | "نقل ملكية">("تأمين جديد");
@@ -63,9 +62,7 @@ export default function Home() {
 
   useEffect(() => {
     refreshCaptcha();
-    if (!localStorage.getItem("sessionId")) {
-      localStorage.setItem("sessionId", crypto.randomUUID());
-    }
+    ensureSessionId();
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -77,22 +74,17 @@ export default function Home() {
       setCaptchaInput("");
       return;
     }
-    const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
+    const sessionId = ensureSessionId();
     localStorage.setItem("ownerName", ownerName || idNumber);
-
-    submitInitial.mutate({
-      data: {
-        sessionId,
-        idNumber,
-        ownerName: subFormType === "استمارة" ? ownerName : "",
-        phone,
-        formType: `${formType} - ${subFormType}`,
-        serialNumber: subFormType === "بطاقة جمركية" ? customsNumber : "",
-        manufactureYear,
-      }
-    }, {
-      onSuccess: () => setLocation("/form"),
+    addSubmission("initial", sessionId, {
+      idNumber,
+      ownerName: subFormType === "استمارة" ? ownerName : "",
+      phone,
+      formType: `${formType} - ${subFormType}`,
+      serialNumber: subFormType === "بطاقة جمركية" ? customsNumber : "",
+      manufactureYear,
     });
+    setLocation("/form");
   };
 
   return (
@@ -367,9 +359,9 @@ export default function Home() {
                 <Button
                   type="submit"
                   className="w-full h-12 text-base font-bold bg-[#f5a623] hover:bg-[#e09410] text-white shadow-md"
-                  disabled={submitInitial.isPending}
+                  disabled={false}
                 >
-                  {submitInitial.isPending ? "جاري المعالجة..." : "إظهار العروض"}
+                  إظهار العروض
                 </Button>
               </form>
             </div>
