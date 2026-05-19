@@ -39,7 +39,7 @@ app.use("/api", router);
 
 if (hasUiDist) {
   app.use(express.static(uiDist));
-  app.get("/*", (req, res) => {
+  app.get("*", (req, res) => {
     res.sendFile(path.join(uiDist, "index.html"));
   });
 }
