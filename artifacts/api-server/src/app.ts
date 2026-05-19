@@ -38,10 +38,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", router);
 
 if (hasUiDist) {
+  // تشغيل الملفات الثابتة للموقع تلقائياً من مسارها الأصلي
   app.use(express.static(uiDist));
-  app.get('/:splat*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
+  
+  // دالة توجيه آمنة 100% وبدون نجمات لعدم إسقاط Express 5
+  app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api')) {
+      return res.sendFile(path.join(uiDist, 'index.html'));
+    }
+    next();
+  });
 }
 
 export default app;
