@@ -1,5 +1,8 @@
 <?php
-session_start();
+// Session is already started in index.php, don't start again
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once './dashboard/init.php';
 
 

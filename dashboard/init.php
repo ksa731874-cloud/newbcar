@@ -1,5 +1,6 @@
 <?php
 ob_start();
+// Session check - don't start if already active
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

@@ -4,7 +4,11 @@ entrypoint = "php"
 [nixpacks]
 PHP_VERSION = "82"
 
+[phpa]
+extensions = ["pdo", "pdo_mysql", "mysqli", "mbstring"]
+
 [deploy]
+buildCommand = "composer install --no-dev --optimize-autoloader"
 startCommand = "php -S 0.0.0.0:$PORT -t ."
 healthcheckPath = "/"
 healthcheckPeriod = "10s"
