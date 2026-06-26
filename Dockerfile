@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql mysqli mbstring
 
 # Enable Apache mod_rewrite for clean URLs
+RUN a2dismod mpm_event || true && a2enmod mpm_prefork
 RUN a2enmod rewrite
 
 # Copy application files
