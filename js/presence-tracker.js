@@ -5,7 +5,7 @@
 
 (function() {
     // Check if Pusher is loaded
-    if (typeof Pusher === 'undefined') {
+    if (typeof Pusher === 'undefined') { 
         console.error('Pusher SDK is required for tracking.');
         return;
     }
