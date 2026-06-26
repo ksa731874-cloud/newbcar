@@ -1,16 +1,17 @@
 <?php
   /**
-   *
+   * Database Connection Class
+   * Supports environment variables for Railway deployment
    */
 
   class DB
   {
 
-    private $host    = DB_HOST;
-    private $user    = DB_USER;
-    private $pass    = DB_PASSWORD;
-    private $name    = DB_NAME;
-    private $charset = DB_CHARSET;
+    private $host;
+    private $user;
+    private $pass;
+    private $name;
+    private $charset;
 
     // Database handler
     private $dbh;
@@ -33,16 +34,49 @@
 
     public function __construct()
     {
+      // Get environment variables with Railway fallbacks
+      $this->host = getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: 'localhost';
+      $this->user = getenv('DB_USER') ?: getenv('MYSQLUSER') ?: 'root';
+      $this->pass = getenv('DB_PASSWORD') ?: getenv('MYSQLPASSWORD') ?: '';
+      $this->name = getenv('DB_NAME') ?: getenv('MYSQL_DATABASE') ?: 'dalatew';
+      $this->charset = defined('DB_CHARSET') ? DB_CHARSET : 'utf8mb4';
+      
       // Set DSN = Database Source Name
       $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->name . ';charset=' . $this->charset;
 
-      // Creat a new PDO instanace
+      // Create a new PDO instance
       try {
         $this->dbh = new PDO($dsn, $this->user, $this->pass, $this->options);
       }
       // Catch any errors
       catch (PDOException $e) {
         $this->error = $e->getMessage();
+        // Display error clearly for debugging
+        die("
+        <!DOCTYPE html>
+        <html><head><title>Database Error</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 40px; background: #f5f5f5; }
+            .error-box { background: white; padding: 30px; border-radius: 10px; max-width: 600px; margin: 0 auto; border-left: 5px solid #e74c3c; }
+            h1 { color: #e74c3c; margin-top: 0; }
+            .detail { background: #f8f8f8; padding: 15px; border-radius: 5px; margin-top: 15px; }
+            code { background: #eee; padding: 2px 5px; border-radius: 3px; }
+        </style>
+        </head>
+        <body>
+        <div class='error-box'>
+            <h1>⚠️ Database Connection Error</h1>
+            <p><strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "</p>
+            <div class='detail'>
+                <strong>Host:</strong> <code>" . htmlspecialchars($this->host) . "</code><br>
+                <strong>Database:</strong> <code>" . htmlspecialchars($this->name) . "</code><br>
+                <strong>User:</strong> <code>" . htmlspecialchars($this->user) . "</code>
+            </div>
+            <p style='color: #666; margin-top: 20px;'>Please check your Railway environment variables:</p>
+            <code>DB_HOST, DB_USER, DB_PASSWORD, DB_NAME</code>
+        </div>
+        </body></html>
+        ");
       }
 
     }
