@@ -1,7 +1,10 @@
 FROM php:8.4-apache
 
-# Install required PHP extensions including pdo_mysql
-RUN docker-php-ext-install pdo pdo_mysql mysqli mbstring
+# Install required system dependencies
+RUN apt-get update && apt-get install -y \
+    libonig-dev \
+    pkg-config \
+    && docker-php-ext-install pdo pdo_mysql mysqli mbstring
 
 # Enable Apache mod_rewrite for clean URLs
 RUN a2enmod rewrite
