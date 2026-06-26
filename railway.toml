@@ -1,0 +1,6 @@
+[railway]
+entrypoint = "php"
+phpVersion = "8.2"
+
+[deploy]
+startCommand = "php -S 0.0.0.0:$PORT -t ."
