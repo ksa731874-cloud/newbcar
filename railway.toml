@@ -3,9 +3,7 @@ entrypoint = "php"
 
 [nixpacks]
 PHP_VERSION = "82"
-
-[phpa]
-extensions = ["pdo", "pdo_mysql", "mysqli", "mbstring"]
+PHP_EXTENSIONS = "pdo_mysql mysqli"
 
 [deploy]
 buildCommand = "composer install --no-dev --optimize-autoloader"
