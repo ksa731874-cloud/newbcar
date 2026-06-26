@@ -58,7 +58,7 @@ echo "<h3>📌 متغيرات البيئة</h3>";
 echo "<table>";
 echo "<tr><th>المتغير</th><th>القيمة</th></tr>";
 
-$env_vars = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'PUSHER_APP_ID', 'PUSHER_KEY', 'PUSHER_SECRET', 'PUSHER_CLUSTER', 'APP_ENV'];
+$env_vars = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'MYSQLHOST', 'MYSQLPORT', 'MYSQLUSER', 'MYSQLPASSWORD', 'MYSQL_DATABASE', 'PUSHER_APP_ID', 'PUSHER_KEY', 'PUSHER_SECRET', 'PUSHER_CLUSTER', 'APP_ENV'];
 foreach ($env_vars as $var) {
     $value = getenv($var) ?: ($_ENV[$var] ?? '<span style="color:red;">غير موجود</span>');
     echo "<tr><td>$var</td><td>$value</td></tr>";
@@ -71,18 +71,20 @@ echo "<div class='section'>";
 echo "<h3>📌 اتصال قاعدة البيانات</h3>";
 
 try {
-    $host = getenv('DB_HOST') ?: 'localhost';
-    $user = getenv('DB_USER') ?: 'root';
-    $pass = getenv('DB_PASSWORD') ?: '';
-    $dbname = getenv('DB_NAME') ?: 'dalatew';
+    // Support Railway's MySQL environment variables
+    $host = getenv('MYSQLHOST') ?: getenv('DB_HOST') ?: 'localhost';
+    $port = getenv('MYSQLPORT') ?: getenv('DB_PORT') ?: '3306';
+    $user = getenv('MYSQLUSER') ?: getenv('DB_USER') ?: 'root';
+    $pass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASSWORD') ?: '';
+    $dbname = getenv('MYSQL_DATABASE') ?: getenv('DB_NAME') ?: 'dalatew';
     
     // Try PDO
-    $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
     $pdo = new PDO($dsn, $user, $pass);
     echo "<div class='success'>✅ PDO Connection: نجاح</div>";
     
     // Try MySQLi
-    $mysqli = @new mysqli($host, $user, $pass, $dbname);
+    $mysqli = @new mysqli($host, $user, $pass, $dbname, $port);
     if ($mysqli->connect_error) {
         echo "<div class='error'>❌ MySQLi Connection: فشل - " . $mysqli->connect_error . "</div>";
     } else {
