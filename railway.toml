@@ -1,6 +1,12 @@
 [railway]
 entrypoint = "php"
-phpVersion = "8.2"
+
+[nixpacks]
+PHP_VERSION = "82"
 
 [deploy]
 startCommand = "php -S 0.0.0.0:$PORT -t ."
+healthcheckPath = "/"
+healthcheckPeriod = "10s"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
