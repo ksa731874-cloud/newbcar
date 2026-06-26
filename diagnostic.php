@@ -58,7 +58,7 @@ echo "<h3>📌 متغيرات البيئة</h3>";
 echo "<table>";
 echo "<tr><th>المتغير</th><th>القيمة</th></tr>";
 
-$env_vars = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'MYSQLHOST', 'MYSQLPORT', 'MYSQLUSER', 'MYSQLPASSWORD', 'MYSQL_DATABASE', 'PUSHER_APP_ID', 'PUSHER_KEY', 'PUSHER_SECRET', 'PUSHER_CLUSTER', 'APP_ENV'];
+$env_vars = ['MYSQLHOST', 'MYSQLPORT', 'MYSQLUSER', 'MYSQLPASSWORD', 'MYSQL_DATABASE', 'MYSQLDATABASE', 'MYSQL_URL', 'MYSQL_PUBLIC_URL', 'MYSQL_ROOT_PASSWORD', 'RAILWAY_PRIVATE_DOMAIN', 'RAILWAY_TCP_PROXY_DOMAIN', 'RAILWAY_TCP_PROXY_PORT', 'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'PUSHER_APP_ID', 'PUSHER_KEY', 'PUSHER_SECRET', 'PUSHER_CLUSTER', 'APP_ENV'];
 foreach ($env_vars as $var) {
     $value = getenv($var) ?: ($_ENV[$var] ?? '<span style="color:red;">غير موجود</span>');
     echo "<tr><td>$var</td><td>$value</td></tr>";
@@ -72,11 +72,11 @@ echo "<h3>📌 اتصال قاعدة البيانات</h3>";
 
 try {
     // Support Railway's MySQL environment variables
-    $host = getenv('MYSQLHOST') ?: getenv('DB_HOST') ?: 'localhost';
-    $port = getenv('MYSQLPORT') ?: getenv('DB_PORT') ?: '3306';
-    $user = getenv('MYSQLUSER') ?: getenv('DB_USER') ?: 'root';
-    $pass = getenv('MYSQLPASSWORD') ?: getenv('DB_PASSWORD') ?: '';
-    $dbname = getenv('MYSQL_DATABASE') ?: getenv('DB_NAME') ?: 'dalatew';
+    $host = getenv('MYSQLHOST') ?: getenv('RAILWAY_PRIVATE_DOMAIN') ?: getenv('DB_HOST') ?: 'localhost';
+    $port = getenv('MYSQLPORT') ?: '3306';
+    $user = getenv('MYSQLUSER') ?: 'root';
+    $pass = getenv('MYSQLPASSWORD') ?: getenv('MYSQL_ROOT_PASSWORD') ?: getenv('DB_PASSWORD') ?: '';
+    $dbname = getenv('MYSQL_DATABASE') ?: getenv('MYSQLDATABASE') ?: getenv('DB_NAME') ?: 'railway';
     
     // Try PDO
     $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";

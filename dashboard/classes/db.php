@@ -34,16 +34,16 @@
 
     public function __construct()
     {
-      // Get environment variables - MUST use Railway injected values
-      // Check multiple possible env var names that Railway might use
-      $this->host = $this->getEnv('DB_HOST', 'MYSQLHOST', 'MYSQL_HOST');
-      $this->user = $this->getEnv('DB_USER', 'MYSQLUSER', 'MYSQL_USER');
-      $this->pass = $this->getEnv('DB_PASSWORD', 'MYSQLPASSWORD', 'MYSQL_PASSWORD');
-      $this->name = $this->getEnv('DB_NAME', 'MYSQL_DATABASE', 'MYSQLDB');
+      // Get environment variables - Railway MySQL injected values
+      $this->host = $this->getEnv('MYSQLHOST', 'RAILWAY_PRIVATE_DOMAIN', 'DB_HOST');
+      $this->user = $this->getEnv('MYSQLUSER', 'DB_USER');
+      $this->pass = $this->getEnv('MYSQLPASSWORD', 'MYSQL_ROOT_PASSWORD', 'DB_PASSWORD');
+      $this->name = $this->getEnv('MYSQL_DATABASE', 'MYSQLDATABASE', 'DB_NAME');
+      $port = $this->getEnv('MYSQLPORT', 'DB_PORT') ?: '3306';
       $this->charset = defined('DB_CHARSET') ? DB_CHARSET : 'utf8mb4';
       
       // Set DSN = Database Source Name
-      $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->name . ';charset=' . $this->charset;
+      $dsn = 'mysql:host=' . $this->host . ';port=' . $port . ';dbname=' . $this->name . ';charset=' . $this->charset;
 
       // Create a new PDO instance
       try {
@@ -54,7 +54,7 @@
         $this->error = $e->getMessage();
         // Display error clearly for debugging
         $allEnvs = '';
-        foreach (['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'MYSQLHOST', 'MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_DATABASE'] as $envName) {
+        foreach (['MYSQLHOST', 'MYSQLPORT', 'MYSQLUSER', 'MYSQLPASSWORD', 'MYSQL_DATABASE', 'MYSQLDATABASE', 'MYSQL_ROOT_PASSWORD', 'RAILWAY_PRIVATE_DOMAIN', 'DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'] as $envName) {
           $val = getenv($envName);
           $allEnvs .= "<p><strong>$envName:</strong> <code style='color: red;'>" . ($val ? $val : 'NOT SET') . "</code></p>";
         }

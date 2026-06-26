@@ -1,11 +1,11 @@
 <?php
 // Database Configuration - Supports Environment Variables for Railway
-// Support Railway's MySQL environment variables
-$DB_HOST = getenv('MYSQLHOST') ?: getenv('DB_HOST') ?: 'localhost';
-$DB_PORT = getenv('MYSQLPORT') ?: getenv('DB_PORT') ?: '3306';
-$DB_USER = getenv('MYSQLUSER') ?: getenv('DB_USER') ?: 'root';
-$DB_PASSWORD = getenv('MYSQLPASSWORD') ?: getenv('DB_PASSWORD') ?: '';
-$DB_NAME = getenv('MYSQL_DATABASE') ?: getenv('DB_NAME') ?: 'dalatew';
+// Railway MySQL environment variables
+$DB_HOST = getenv('MYSQLHOST') ?: getenv('RAILWAY_PRIVATE_DOMAIN') ?: getenv('DB_HOST') ?: 'localhost';
+$DB_PORT = getenv('MYSQLPORT') ?: '3306';
+$DB_USER = getenv('MYSQLUSER') ?: 'root';
+$DB_PASSWORD = getenv('MYSQLPASSWORD') ?: getenv('MYSQL_ROOT_PASSWORD') ?: getenv('DB_PASSWORD') ?: '';
+$DB_NAME = getenv('MYSQL_DATABASE') ?: getenv('MYSQLDATABASE') ?: getenv('DB_NAME') ?: 'railway';
 
 // Connect to database
 $con = mysqli_connect($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME);
