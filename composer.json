@@ -1,7 +1,17 @@
 {
     "require": {
+        "php": "^8.0",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-mysqli": "*",
+        "ext-mbstring": "*",
         "phpmailer/phpmailer": "^6.8",
         "pusher/pusher-php-server": "^7.2",
         "cboden/ratchet": "^0.4.4"
+    },
+    "config": {
+        "platform": {
+            "ext-pdo_mysql": "8.0"
+        }
     }
 }
