@@ -1,0 +1,6 @@
+[04-Apr-2026 13:22:45 Europe/Berlin] Chat API Error: Cannot add or update a child row: a foreign key constraint fails (`test`.`chat_messages`, CONSTRAINT `fk_session` FOREIGN KEY (`session_id`) REFERENCES `chat_sessions` (`session_id`) ON DELETE CASCADE)
+[04-Apr-2026 13:23:33 Europe/Berlin] Chat API Error: Cannot add or update a child row: a foreign key constraint fails (`test`.`chat_messages`, CONSTRAINT `fk_session` FOREIGN KEY (`session_id`) REFERENCES `chat_sessions` (`session_id`) ON DELETE CASCADE)
+[04-Apr-2026 14:35:42 Europe/Berlin] Chat API Error: Unknown column 'value' in 'field list'
+[04-Apr-2026 14:35:49 Europe/Berlin] Chat API Error: Unknown column 'value' in 'field list'
+[04-Apr-2026 14:36:07 Europe/Berlin] Chat API Error: Unknown column 'value' in 'field list'
+[04-Apr-2026 14:36:45 Europe/Berlin] Chat API Error: Unknown column 'value' in 'field list'

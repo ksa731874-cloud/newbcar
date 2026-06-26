@@ -1,0 +1,919 @@
+[{
+        "id": 1,
+        "data": [{
+                "id": 1,
+                "img": "Sagr.svg",
+                "extra": [{
+                    "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                    "price": "",
+                    "clicked": true
+                }],
+                "firprice": 154.5,
+                "totalprice": 489.66,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 0
+            },
+            {
+                "id": 2,
+                "img": "GGI.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 40,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق والركاب ",
+                        "price": 220,
+                        "clicked": false
+                    }, {
+                        "title": " المساعدة على الطريق ",
+                        "price": 35,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 115,
+                "totalprice": 720.74,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 0
+            },
+            {
+                "id": 3,
+                "img": "GulfUnion.svg",
+                "extra": [{
+                    "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                    "price": "",
+                    "clicked": true
+                }],
+                "firprice": 123.25,
+                "totalprice": 571.65,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 4,
+                "img": "Alalamiya.svg",
+                "extra": [{
+                    "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                    "price": "",
+                    "clicked": true
+                }],
+                "firprice": 155.32,
+                "totalprice": 521.3,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 0
+            },
+            {
+                "id": 5,
+                "img": "AICC.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 350,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 137.94,
+                "totalprice": 551.79,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 6,
+                "img": "AlRajhi.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تغطية الحوادث الشخصية للسائق و الركاب ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  المساعدة على الطريق ",
+                        "price": 30,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  تغطیة ضد كسر الزجاج والحرائق والسرقة ",
+                        "price": 150,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  تغطية الكوارث الطبيعية ",
+                        "price": 100,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 85.42,
+                "totalprice": 468.7,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 7,
+                "img": "AlRajhi-1.svg",
+                "extra": [{
+                        "title": " مسؤلية الطرف الثالث ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  إعفاء من نسبة استهلاك قطع الغيار ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "   تكاليف حالات الطوارئ الطبية ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "   تغطية مطالبة واحدة فقط لمركبة المؤمن له (شامل) – قيمة التعويض <br/> لاتتعدى قيمة المركبة السوقيه ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "   سرعة رفع المطالبة ",
+                        "price": "",
+                        "clicked": true
+                    }
+                ],
+                "firprice": 136.17,
+                "totalprice": 544.7,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 8,
+                "img": "UCA.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  المساعدة على الطريق ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 40,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  المساعدة على الطريق البلاتينية ",
+                        "price": 150,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 152.53,
+                "totalprice": 610.52,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 2
+            },
+            {
+                "id": 9,
+                "img": "Walaa.svg",
+                "extra": [{
+                    "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                    "price": "",
+                    "clicked": true
+                }],
+                "firprice": 158.48,
+                "totalprice": 633.93,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 10,
+                "img": "MedGulf.svg",
+                "extra": [{
+                    "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                    "price": "",
+                    "clicked": true
+                }],
+                "firprice": 124.52,
+                "totalprice": 498.08,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 11,
+                "img": "TUIC.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 50,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 108.27,
+                "totalprice": 433.11,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 0
+            },
+            {
+                "id": 12,
+                "img": "Tawuniya.svg",
+                "extra": [{
+                        "title": " تغطية شاملة حتى 10,000 ريال سعودى ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  الحوادث الشخصية للسائق فقط ",
+                        "price": 60,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  الحوادث الشخصية للسائق والركاب ",
+                        "price": 360,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 152.68,
+                "totalprice": 610.75,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 3
+            },
+            {
+                "id": 13,
+                "img": "Tawuniya.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  الحوادث الشخصية للسائق فقط ",
+                        "price": 60,
+                        "clicked": false
+                    },
+                    {
+                        "title": "   المساعدة على الطريق + درايف مجانا ",
+                        "price": 99,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  الحوادث الشخصية للسائق والركاب ",
+                        "price": 360,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 152.68,
+                "totalprice": 610.75,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 3
+            },
+            {
+                "id": 14,
+                "img": "Amana.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " الوفاة والإصابة الجسدية والمصاريف الطبية للمؤمن <br/> له أو السائق المسمى ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 350,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 553.17,
+                "totalprice": 998.73,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 0
+            },
+            {
+                "id": 15,
+                "img": "ArabianShield.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 60,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  المساعدة على الطريق ",
+                        "price": 25,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 350,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 138.12,
+                "totalprice": 552.5,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 16,
+                "img": "Buruj.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 70,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 490,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 133.23,
+                "totalprice": 512.93,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 17,
+                "img": "Salama.svg",
+                "extra": [{
+                    "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                    "price": "",
+                    "clicked": true
+                }],
+                "firprice": 107.57,
+                "totalprice": 430.28,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 4
+            },
+            {
+                "id": 18,
+                "img": "Allianz.svg",
+                "extra": [{
+                    "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                    "price": "",
+                    "clicked": true
+                }],
+                "firprice": 157,
+                "totalprice": 628.22,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 2
+            },
+            {
+                "id": 19,
+                "img": "ACIG.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 60,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق والركاب ",
+                        "price": 360,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 152.45,
+                "totalprice": 609.8,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 0
+            },
+            {
+                "id": 20,
+                "img": "AXA.svg",
+                "extra": [{
+                        "title": "المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " الإصابة الجسدية للغير ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تلف ممتلكات الغير ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 280,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 149.36,
+                "totalprice": 537.47,
+                "title": "ضد الغير",
+                "logo": "TPL.svg",
+                "start": 0
+            }
+        ]
+    }, {
+        "id": 2,
+        "data": [{
+                "id": 21,
+                "img": "TUIC.svg",
+                "extra": [{
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": " التغطية الجغرافية لمملكة البحرين ",
+                        "price": 200,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية دول مجلس التعاون الخليجي ",
+                        "price": 500,
+                        "clicked": false
+                    },
+                    {
+                        "title": " سيارة بديلة - الحد الأقصى للتعويض 75 ريال عن كل <br/> يوم وبحد أقصى 1500 ريال عن كامل المدة ",
+                        "price": 225,
+                        "clicked": false
+                    },
+                    {
+                        "title": " سيارة بديلة - الحد الأقصى للتعويض 100 ريال عن كل <br/>  يوم وبحد أقصى 2000 ريال عن كامل المدة ",
+                        "price": 293,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 894.91,
+                "totalprice": 2379,
+                "title": " أمان الاتحاد",
+                "logo": "wafi-smart.svg",
+                "start": 0
+            },
+            {
+                "id": 22,
+                "img": "ACIG.svg",
+                "extra": [{
+                        "title": "  المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " الاخطار الطبيعية ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  المساعدة على الطريق ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تغطية الحوادث الشخصية للسائق والركاب ",
+                        "price": 350,
+                        "clicked": false
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 50,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 407.64,
+                "totalprice": 1030,
+                "title": "  تأمين أسيج المميز",
+                "logo": "wafi-smart.svg",
+                "start": 0
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "data": [{
+                "id": 23,
+                "img": "AlRajhi.svg",
+                "extra": [{
+                        "title": " مسؤلية الطرف الثالث ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  إعفاء من نسبة استهلاك قطع الغيار ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تكاليف حالات الطوارئ الطبية ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تغطیة ضد كسر الزجاج والحرائق والسرقة ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تغطية الخسارة الكلية أو الجزئية للمركبة ",
+                        "price": "",
+                        "clicked": true
+                    }
+                ],
+                "firprice": 140.79,
+                "totalprice": 1263,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 4
+            },
+            {
+                "id": 24,
+                "img": "AICC.svg",
+                "extra": [{
+                        "title": "  تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": "   تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 280,
+                        "clicked": false
+                    },
+                    {
+                        "title": "   تغطية دول مجلس التعاون الخليجي ",
+                        "price": 500,
+                        "clicked": false
+                    },
+                    {
+                        "title": "   سيارة بديلة ",
+                        "price": 250,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 1.030,
+                "totalprice": 2781,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 4
+            },
+            {
+                "id": 25,
+                "img": "GGI.svg",
+                "extra": [{
+                        "title": "  الاخطار الطبيعية ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "   الزجاج الأمامي والحرائق والسرقة ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  المساعدة على الطريق ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  مسؤولية الطرف الثالث عن الاضرار الجسدية ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 40,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 379.73,
+                "totalprice": 1118,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 1
+            },
+            {
+                "id": 26,
+                "img": "MedGulf.svg",
+                "extra": [{
+                        "title": "  الاخطار الطبيعية ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  ضرر كامل ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  ضرر جزئي ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  الزجاج الأمامي والحرائق والسرقة ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  سيارة بديلة ",
+                        "price": 350,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 504.85,
+                "totalprice": 2019,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 4
+            },
+            {
+                "id": 27,
+                "img": "Walaa.svg",
+                "extra": [{
+                        "title": "  تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": "   المساعدة على الطريق ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": "   سيارة بديلة ",
+                        "price": 450,
+                        "clicked": false
+                    },
+                    {
+                        "title": "   تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 280,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 455.41,
+                "totalprice": 1321,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 4
+            },
+            {
+                "id": 28,
+                "img": "Amana.svg",
+                "extra": [{
+                        "title": "   المساعدة على الطريق ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  الوفاة والإصابة الجسدية والمصاريف الطبية للمؤمن له <br/> أو السائق المسمى ",
+                        "price": 50,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 350,
+                        "clicked": false
+                    },
+                    {
+                        "title": "   إيجار المركبة البديلة بحد يومي 100 ريال لمدة 10 أيام ",
+                        "price": 300,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  الحوادث التي تقع خارج الحدود الإقليمية للمملكة العربية <br/> السعودية لجميع دول مجلس التعاون الخليجي والأردن ",
+                        "price": 600,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 372.46,
+                "totalprice": 1189,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 4
+            },
+            {
+                "id": 29,
+                "img": "Salama.svg",
+                "extra": [{
+                        "title": "   سيارة بديلة ",
+                        "price": 575,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  المساعدة على الطريق ",
+                        "price": 345,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  الوفاة والإصابة الجسدية والمصاريف الطبية للمؤمن له <br/> أو السائق المسمى ",
+                        "price": 920,
+                        "clicked": false
+                    },
+                    {
+                        "title": " الحوادث التي تقع خارج الحدود الإقليمية للمملكة العربية السعودية ",
+                        "price": 920,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 879.25,
+                "totalprice": 3517,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 4
+            },
+            {
+                "id": 30,
+                "img": "ArabianShield.svg",
+                "extra": [{
+                        "title": "  المسؤولية المدنية تجاه الغير بحد أقصى 10,000,000 ريال ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  الاخطار الطبيعية ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  ضرر كامل ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " الزجاج الأمامي والحرائق والسرقة ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": " تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 60,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 493.7,
+                "totalprice": 1574,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 4
+            },
+            {
+                "id": 31,
+                "img": "Buruj.svg",
+                "extra": [{
+                        "title": "  تغطية الحوادث الشخصية للسائق فقط ",
+                        "price": 58.82,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  تغطية الحوادث الشخصية للركاب فقط ",
+                        "price": 411.74,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  استئجار سيارة بحد أقصى 2,000 ريال سعودي لكل مركبة، <br/> بحد اقصى 100 ريال سعودي في اليوم، وبمدة لا تتجاوز 20 يوم ",
+                        "price": 600,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  استئجار سيارة بحد أقصى 5,000 ريال سعودي لكل مركبة، <br/> بحد اقصى 250 ريال سعودي في اليوم، وبمدة لا تتجاوز 20 يوم ",
+                        "price": 1500,
+                        "clicked": false
+                    },
+                    {
+                        "title": "  باستئجار سيارة بحد أقصى 4,000 ريال سعودي لكل مركبة، <br/> بحد اقصى 200 ريال سعودي في اليوم، وبمدة لا تتجاوز 20 يوم ",
+                        "price": 1200,
+                        "clicked": false
+                    }
+                ],
+                "firprice": 480.73,
+                "totalprice": 1422,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 4
+            },
+            {
+                "id": 32,
+                "img": "AXA.svg",
+                "extra": [{
+                        "title": "   الإصابة الجسدية للغير ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تلف ممتلكات الغير ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  خسارة أو تلف مركبتك ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تغطية مجانية للتكاليف الطبية الطارئة لحد 5000 ريال لكل شخص ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  الاخطار الطبيعية ",
+                        "price": "",
+                        "clicked": true
+                    }
+                ],
+                "firprice": 605.07,
+                "totalprice": 1920,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 0
+            },
+            {
+                "id": 33,
+                "img": "Wataniya.svg",
+                "extra": [{
+                        "title": " المسؤولية تجاه الغير (الطرف الثالث):الحد الأقصى لمسؤولية الشركة <br/> في الواقعة الواحدة وخلال فترة سريان وثيقة التأمين <br/> بالنسبة للأضرار الجسدية (بما في ذلك الديات والمبالغ المقدرة <br/> عن الإصابات والمصاريف الطبية) والأضرار المادية معاً لن تتجاوز <br/> مبلغاً إجمالياً قدره 10,000,000ريال (عشرة ملايين ريال سعودي) حداً أقصى لمسئولية الشركة.",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تغطية الخسارة الكلية أو الجزئية للمركبة ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  تغطية السرقة والحرائق ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  الكوارث الطبيعية ",
+                        "price": "",
+                        "clicked": true
+                    },
+                    {
+                        "title": "  مصاريف السحب (الرسوم الفعلية ، بحد أقصى 500 ريال سعودي / - <br/> لكل حادث داخل المدينة و 1،000 ريال سعودي / -  خارج المدينة ؛ <br/> بشرط تقديم إيصال النقل عند  تقديم المطالبة ..) ",
+                        "price": "",
+                        "clicked": true
+                    }
+                ],
+                "firprice": 728.5,
+                "totalprice": 2214,
+                "title": " شامل",
+                "logo": "Comp.svg",
+                "start": 0
+            }
+        ]
+    }
+]
