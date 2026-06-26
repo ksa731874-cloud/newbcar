@@ -2,12 +2,11 @@
 entrypoint = "php"
 
 [nixpacks]
-PHP_VERSION = "82"
+PHP_VERSION = "84"
 PHP_EXTENSIONS = "pdo_mysql mysqli"
 
 [deploy]
-buildCommand = "composer install --no-dev --optimize-autoloader"
-startCommand = "php -S 0.0.0.0:$PORT -t ."
+buildCommand = "docker build -t app . && docker run -p 8080:80 app"
 healthcheckPath = "/"
 healthcheckPeriod = "10s"
 restartPolicyType = "ON_FAILURE"
