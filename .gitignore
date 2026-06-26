@@ -1,0 +1,52 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Dependencies
+vendor/
+node_modules/
+composer.lock
+
+# Logs
+*.log
+logs/
+chat_error.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Database files
+*.sql
+!dsdcatabase.sql
+
+# Cache
+cache/
+.cache/
+
+# Build files
+dist/
+build/
+
+# Testing
+coverage/
+.phpunit.result.cache
+
+# IDE specific
+.vscode/settings.json
+.idea/workspace.xml
+
