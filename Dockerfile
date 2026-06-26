@@ -18,4 +18,7 @@ RUN chown -R www-data:www-data /var/www/html
 # Configure Apache
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
 
-EXPOSE 80
+# Create a script to configure Apache port at runtime
+RUN printf '#!/bin/bash\nif [ -n "$PORT" ]; then sed -i "s/Listen 80/Listen $PORT/g" /etc/apache2/ports.conf; fi\nexec apache2-foreground\n' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+EXPOSE $PORT
