@@ -6,6 +6,10 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     && docker-php-ext-install pdo pdo_mysql mysqli mbstring
 
+# Fix Apache MPM configuration - disable all MPM modules except prefork
+RUN a2dismod mpm_event mpm_worker mpm_itk 2>/dev/null || true && \
+    a2enmod mpm_prefork
+
 # Enable Apache mod_rewrite for clean URLs
 RUN a2enmod rewrite
 
