@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql mysqli mbstring
 
 # Enable Apache mod_rewrite for clean URLs
-RUN a2dismod mpm_event || true && a2enmod mpm_prefork
 RUN a2enmod rewrite
 
 # Copy application files
@@ -20,6 +19,6 @@ RUN chown -R www-data:www-data /var/www/html
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
 
 # Create a script to configure Apache port at runtime
-RUN printf '#!/bin/bash\nif [ -n "$PORT" ]; then sed -i "s/Listen 80/Listen $PORT/g" /etc/apache2/ports.conf; fi\nexec apache2-foreground\n' > /entrypoint.sh && chmod +x /entrypoint.sh
+RUN printf '#!/bin/bash\nif [ -n "$PORT" ]; then\n  sed -i "s/Listen 80/Listen $PORT/g" /etc/apache2/ports.conf\n  sed -i "s/<VirtualHost \\*:80>/<VirtualHost *:$PORT>/g" /etc/apache2/sites-available/000-default.conf\nfi\nexec apache2-foreground\n' > /entrypoint.sh && chmod +x /entrypoint.sh
 
-EXPOSE $PORT
+CMD ["/entrypoint.sh"]
