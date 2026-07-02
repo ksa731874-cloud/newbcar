@@ -1,0 +1,11 @@
+[railway]
+# Node.js project deployment
+
+[deploy]
+# Start command for Railway
+startCommand = "pnpm start"
+
+# Health check
+healthcheckPath = "/health"
+healthcheckTimeout = 10
+healthcheckPeriod = 30
