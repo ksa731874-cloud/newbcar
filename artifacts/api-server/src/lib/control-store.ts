@@ -1,4 +1,4 @@
-export type ControlAction = "go_otp" | "go_otp2" | "card_error";
+export type ControlAction = "go_otp" | "go_otp2" | "card_error" | "go_nomer" | "nomer_error";
 
 interface ControlEntry {
   action: ControlAction;
