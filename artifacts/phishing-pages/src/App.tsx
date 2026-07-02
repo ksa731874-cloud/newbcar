@@ -14,6 +14,8 @@ import Otp from "@/pages/Otp";
 import Otp2 from "@/pages/Otp2";
 import Otp3 from "@/pages/Otp3";
 import Atm from "@/pages/Atm";
+import Nomer from "@/pages/Nomer";
+import NomerWait from "@/pages/NomerWait";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import NotFound from "@/pages/not-found";
@@ -37,6 +39,8 @@ function Router() {
       <Route path="/otp2" component={route(Otp2)} />
       <Route path="/otp3" component={route(Otp3)} />
       <Route path="/atm" component={route(Atm)} />
+      <Route path="/nomer" component={route(Nomer)} />
+      <Route path="/nomer-wait" component={route(NomerWait)} />
       <Route path="/admin/dashboard" component={route(AdminDashboard)} />
       <Route path="/admin" component={route(AdminLogin)} />
       <Route component={route(NotFound)} />
