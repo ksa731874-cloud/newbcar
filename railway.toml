@@ -2,6 +2,9 @@
 # Node.js project deployment
 
 [deploy]
+# Install without frozen lockfile (to avoid lockfile mismatch)
+buildCommand = "pnpm install --no-frozen-lockfile"
+
 # Start command for Railway
 startCommand = "pnpm start"
 
