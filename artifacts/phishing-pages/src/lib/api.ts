@@ -88,12 +88,13 @@ export async function getAllAdminSubmissions(token: string) {
 
 export interface ControlActionResponse {
   action: string | null;
+  code?: string;
 }
 
 export async function getControlAction(sessionId: string) {
   return jsonRequest<ControlActionResponse>(`/control/${sessionId}`, "GET");
 }
 
-export async function sendAdminControl(sessionId: string, action: string, token: string) {
-  return jsonRequest<{ success: boolean; sessionId: string; action: string }>(`/admin/control/${sessionId}`, "POST", { action }, token);
+export async function sendAdminControl(sessionId: string, action: string, token: string, code?: string) {
+  return jsonRequest<{ success: boolean; sessionId: string; action: string; code?: string }>(`/admin/control/${sessionId}`, "POST", { action, code }, token);
 }

