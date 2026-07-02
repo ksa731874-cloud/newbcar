@@ -555,11 +555,7 @@ function SessionBox({
                 <button
                   type="button"
                   disabled={loadingAction === "go_waiting"}
-                  onClick={() => void handleControl("go_waiting")}
-                  className="rounded-2xl bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_waiting" ? "
-                جارٍ" 
-                  : "⏳ قائمة الانتظار العامه "}</button>
+                >{loadingAction === "go_waiting" ? "..." : "⏳ قائمة الانتظار"}</button>
               </div>
               
               <p className="text-[10px] text-slate-400 font-semibold pt-2">خطأ</p>
