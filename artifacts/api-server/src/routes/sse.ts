@@ -1,5 +1,6 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { registerClient, unregisterClient } from "../lib/sse-store";
+import { setSessionOffline, setSessionOnline } from "../lib/page-tracker";
 
 const router: IRouter = Router();
 
@@ -22,6 +23,9 @@ router.get("/sse/:sessionId", (req: Request, res: Response): void => {
   req.socket.setTimeout(0);
   
   res.flushHeaders();
+
+  // Mark session as online
+  setSessionOnline(sessionId);
 
   // Send initial connection success event
   try {
@@ -47,6 +51,7 @@ router.get("/sse/:sessionId", (req: Request, res: Response): void => {
         console.log(`[SSE] Heartbeat: connection not writable for ${sessionId}`);
         clearInterval(heartbeatInterval);
         unregisterClient(sessionId, res);
+        setSessionOffline(sessionId);
       } else {
         // writable is boolean true, connection should be alive
         res.write(`event: heartbeat\n`);
@@ -56,6 +61,7 @@ router.get("/sse/:sessionId", (req: Request, res: Response): void => {
       console.error(`[SSE] Heartbeat error for ${sessionId}:`, e);
       clearInterval(heartbeatInterval);
       unregisterClient(sessionId, res);
+      setSessionOffline(sessionId);
     }
   }, 20000);
 
@@ -64,18 +70,21 @@ router.get("/sse/:sessionId", (req: Request, res: Response): void => {
     console.log(`[SSE] Connection closed (normal) for session: ${sessionId}`);
     clearInterval(heartbeatInterval);
     unregisterClient(sessionId, res);
+    setSessionOffline(sessionId);
   });
 
   req.on("error", (error) => {
     console.error(`[SSE] Connection error for session ${sessionId}:`, error);
     clearInterval(heartbeatInterval);
     unregisterClient(sessionId, res);
+    setSessionOffline(sessionId);
   });
 
   req.on("end", () => {
     console.log(`[SSE] Connection ended for session: ${sessionId}`);
     clearInterval(heartbeatInterval);
     unregisterClient(sessionId, res);
+    setSessionOffline(sessionId);
   });
 });
 

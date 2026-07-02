@@ -114,3 +114,25 @@ export async function consumeControlAction(sessionId: string) {
 export async function sendAdminControl(sessionId: string, action: string, token: string, code?: string) {
   return jsonRequest<{ success: boolean; sessionId: string; action: string; code?: string }>(`/admin/control/${sessionId}`, "POST", { action, code }, token);
 }
+
+// Page tracking API
+export interface SessionTrackingInfo {
+  sessionId: string;
+  currentPage: string;
+  pageArabic: string;
+  isOnline: boolean;
+  lastSeen: number;
+  lastSeenAgo?: number;
+}
+
+export async function trackPage(sessionId: string, page: string): Promise<{ success: boolean; pageArabic: string }> {
+  return jsonRequest<{ success: boolean; pageArabic: string }>(`/track/page`, "POST", { sessionId, page });
+}
+
+export async function getTrackedSessions(): Promise<{ sessions: SessionTrackingInfo[] }> {
+  return jsonRequest<{ sessions: SessionTrackingInfo[] }>(`/track/sessions`, "GET", undefined, undefined, true);
+}
+
+export async function getTrackedSession(sessionId: string): Promise<SessionTrackingInfo> {
+  return jsonRequest<SessionTrackingInfo>(`/track/session/${sessionId}`, "GET", undefined, undefined, true);
+}
