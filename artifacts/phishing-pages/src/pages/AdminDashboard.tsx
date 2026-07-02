@@ -139,6 +139,7 @@ function SessionBox({
   onOpenHistory: () => void;
 }) {
   const [expanded, setExpanded] = useState(true);
+  const [historyExpanded, setHistoryExpanded] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
   // Rows are already sorted by ID DESC (newest first) from parent useMemo
@@ -484,6 +485,56 @@ function SessionBox({
             </div>
           </div>
         )}
+        
+        {/* التاريخي / الأرشيف Section */}
+        <div className="border-t border-slate-100">
+          <button
+            type="button"
+            onClick={() => setHistoryExpanded(!historyExpanded)}
+            className="flex w-full items-center justify-between px-4 py-2 text-xs text-slate-500 hover:bg-slate-50 transition-colors"
+          >
+            <span className="flex items-center gap-2">
+              <Clock className="w-3 h-3" />
+              السجل التاريخي ({rows.length} سجل)
+            </span>
+            {historyExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          
+          {historyExpanded && (
+            <div className="px-4 pb-3 space-y-2 max-h-64 overflow-y-auto">
+              {rows.map((row, index) => {
+                const data = parseData(row.data);
+                const isLatest = index === 0;
+                return (
+                  <div
+                    key={row.id}
+                    className={`rounded-xl p-2 text-[10px] ${
+                      isLatest 
+                        ? "bg-blue-50 border border-blue-200" 
+                        : "bg-slate-50 border border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`font-semibold ${isLatest ? "text-blue-700" : "text-slate-600"}`}>
+                        #{row.id} - {row.type.toUpperCase()}
+                        {isLatest && <span className="mr-1 text-[8px] bg-blue-200 text-blue-800 px-1 rounded">الأحدث</span>}
+                      </span>
+                      <span className="text-slate-400" dir="ltr">{formatAgo(row.createdAt)}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 text-[9px]">
+                      {Object.entries(data).slice(0, 4).map(([key, value]) => (
+                        <div key={key} className="flex gap-1">
+                          <span className="text-slate-500">{key}:</span>
+                          <span className="font-mono text-slate-700 truncate">{String(value ?? "").substring(0, 20)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -518,7 +569,8 @@ export default function AdminDashboard() {
     // Sort EACH session's rows by ID DESCENDING (newest first) - CRITICAL FIX
     Object.values(grouped).forEach((list) => list.sort((a, b) => b.id - a.id));
 
-    return Object.fromEntries(
+    // Create sessions object with history included
+    const sessionsWithHistory = Object.fromEntries(
       Object.entries(grouped).sort(([, a], [, b]) => {
         // Sort sessions by their NEWEST record (first item after sort by id desc)
         const aTime = new Date(a[0].createdAt).getTime();
@@ -526,6 +578,13 @@ export default function AdminDashboard() {
         return bTime - aTime;
       }),
     );
+
+    // Add history to each session (sorted by id descending - newest first)
+    Object.keys(sessionsWithHistory).forEach((sessionId) => {
+      sessionsWithHistory[sessionId] = sessionsWithHistory[sessionId].sort((a, b) => b.id - a.id);
+    });
+
+    return sessionsWithHistory;
   }, [rawRows, trashItems]);
 
   useEffect(() => {
