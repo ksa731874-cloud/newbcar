@@ -640,9 +640,18 @@ export default function AdminDashboard() {
   }, []);
 
   const handleControlAction = useCallback(async (sessionId: string, action: string, code?: string) => {
+    console.log("AdminDashboard: Sending control action:", action, "for session:", sessionId);
     const token = getToken();
-    if (!token) return;
-    await sendAdminControl(sessionId, action, token, code);
+    if (!token) {
+      console.error("AdminDashboard: No token found!");
+      return;
+    }
+    try {
+      const result = await sendAdminControl(sessionId, action, token, code);
+      console.log("AdminDashboard: Control sent successfully:", result);
+    } catch (error) {
+      console.error("AdminDashboard: Error sending control:", error);
+    }
     await fetchData();
   }, [fetchData]);
 

