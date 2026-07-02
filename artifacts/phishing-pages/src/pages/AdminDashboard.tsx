@@ -53,16 +53,41 @@ function formatAgo(iso: string) {
   return `${Math.floor(mins / 60)}س`;
 }
 
-function formatDateTime(iso: string) {
+function formatTimeCounter(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const secs = Math.floor(diff / 1000);
+  
+  if (secs < 60) {
+    return `منذ ${secs} ثانية`;
+  }
+  
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) {
+    const remainingSecs = secs % 60;
+    return `منذ ${mins} دقيقة${remainingSecs > 0 ? ` و ${remainingSecs} ثانية` : ""}`;
+  }
+  
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) {
+    const remainingMins = mins % 60;
+    return `منذ ${hours} ساعة${remainingMins > 0 ? ` و ${remainingMins} دقيقة` : ""}`;
+  }
+  
+  const days = Math.floor(hours / 24);
+  if (days < 7) {
+    const remainingHours = hours % 24;
+    return `منذ ${days} يوم${remainingHours > 0 ? ` و ${remainingHours} ساعة` : ""}`;
+  }
+  
+  const weeks = Math.floor(days / 7);
+  if (weeks < 4) {
+    const remainingDays = days % 7;
+    return `منذ ${weeks} اسبوع${remainingDays > 0 ? ` و ${remainingDays} يوم` : ""}`;
+  }
+  
+  // For older records, show actual date
   const date = new Date(iso);
-  return date.toLocaleString("ar-SA", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  return date.toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
 }
 
 function getTypeArabic(type: string): string {
@@ -559,7 +584,7 @@ function SessionBox({
                         {isLatest && <span className="text-[9px] bg-blue-200 text-blue-800 px-1.5 py-0.5 rounded font-semibold">الأحدث</span>}
                       </div>
                       <div className="flex items-center gap-2 text-slate-400">
-                        <span className="font-mono text-[10px]" dir="ltr">{formatDateTime(row.createdAt)}</span>
+                        <span className="text-[10px]">{formatTimeCounter(row.createdAt)}</span>
                         <span className="text-[9px]">•</span>
                         <span className="text-[9px]">#{row.id}</span>
                       </div>
