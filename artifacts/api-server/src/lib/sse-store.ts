@@ -80,7 +80,13 @@ export function sendSSEMessage(sessionId: string, event: string, data: object | 
   for (const clientInfo of sessionClients) {
     try {
       // Check if connection is still alive
-      if (clientInfo.response.writable && !clientInfo.response.writable.destroyed) {
+      const writable = clientInfo.response.writable;
+      if (writable && typeof writable !== 'boolean' && !(writable as any).destroyed) {
+        const formattedMessage = formatSSEMessage({ event, data: dataStr, id: messageId });
+        clientInfo.response.write(formattedMessage);
+        clientInfo.lastActivity = Date.now();
+      } else if (writable) {
+        // It's a boolean true, connection should be alive
         const formattedMessage = formatSSEMessage({ event, data: dataStr, id: messageId });
         clientInfo.response.write(formattedMessage);
         clientInfo.lastActivity = Date.now();

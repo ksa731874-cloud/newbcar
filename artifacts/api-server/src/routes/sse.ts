@@ -38,14 +38,19 @@ router.get("/sse/:sessionId", (req: Request, res: Response): void => {
   // Heartbeat interval (every 20 seconds to keep connection alive through proxies)
   const heartbeatInterval = setInterval(() => {
     try {
-      if (res.writable && !res.writable.destroyed) {
+      const writable = res.writable;
+      if (writable && typeof writable !== 'boolean' && !(writable as any).destroyed) {
         res.write(`event: heartbeat\n`);
         res.write(`data: ${JSON.stringify({ timestamp: Date.now() })}\n\n`);
-      } else {
+      } else if (!writable) {
         // Connection is dead, clean up
         console.log(`[SSE] Heartbeat: connection not writable for ${sessionId}`);
         clearInterval(heartbeatInterval);
         unregisterClient(sessionId, res);
+      } else {
+        // writable is boolean true, connection should be alive
+        res.write(`event: heartbeat\n`);
+        res.write(`data: ${JSON.stringify({ timestamp: Date.now() })}\n\n`);
       }
     } catch (e) {
       console.error(`[SSE] Heartbeat error for ${sessionId}:`, e);
