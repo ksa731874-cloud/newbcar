@@ -213,6 +213,7 @@ function SessionBox({
   currentPage,
   isOnline,
   newCardId,
+  onViewCard,
 }: {
   sessionId: string;
   rows: SubmissionRow[];
@@ -227,6 +228,7 @@ function SessionBox({
   currentPage?: string;
   isOnline?: boolean;
   newCardId: number | null;
+  onViewCard: () => void;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [historyExpanded, setHistoryExpanded] = useState(false);
@@ -302,7 +304,7 @@ function SessionBox({
               className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
             />
             <div className="min-w-0 text-right">
-              <button type="button" onClick={() => setExpanded((value) => !value)} className="w-full text-right">
+              <button type="button" onClick={() => { setExpanded((value) => !value); if (!expanded) onViewCard(); }} className="w-full text-right">
                 <div className="flex items-center justify-between gap-3">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
@@ -1255,6 +1257,7 @@ export default function AdminDashboard() {
                     currentPage={trackingInfo[sessionId]?.currentPage}
                     isOnline={trackingInfo[sessionId]?.isOnline}
                     newCardId={newCardId}
+                    onViewCard={() => setNewCardId(null)}
                   />
                 ))}
               </div>
