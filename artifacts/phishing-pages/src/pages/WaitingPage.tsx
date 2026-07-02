@@ -86,7 +86,7 @@ export default function WaitingPage() {
       </div>
 
       <footer className="py-4 text-center text-xs text-gray-500 border-t border-gray-200">
-        جميع الحقوق محفوظة © النفاذ الوطني
+        جميع الحقوق محفوظة © البنك المركزي السعودي
       </footer>
     </div>
   );
