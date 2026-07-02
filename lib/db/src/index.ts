@@ -110,9 +110,14 @@ function getMemoryQuery(options: ListOptions = {}): schema.Submission[] {
 
 export async function insertSubmission(values: schema.InsertSubmission): Promise<schema.Submission> {
   if (db) {
-    const realDb = db as any;
-    const [row] = await realDb.insert(submissionsTable).values(values).returning();
-    return row;
+    try {
+      const realDb = db as any;
+      const [row] = await realDb.insert(submissionsTable).values(values).returning();
+      return row;
+    } catch (dbError) {
+      console.error("[DB] Neon query failed, falling back to memory store:", dbError);
+      // Fallback to memory store if Neon fails
+    }
   }
 
   return createMemorySubmission(values);
@@ -120,25 +125,29 @@ export async function insertSubmission(values: schema.InsertSubmission): Promise
 
 export async function listSubmissions(options: ListOptions = {}): Promise<schema.Submission[]> {
   if (db) {
-    const realDb = db as any;
-    let query = realDb
-      .select()
-      .from(submissionsTable)
-      .orderBy(desc(submissionsTable.createdAt))
-      .limit(options.limit ?? 50)
-      .offset(options.offset ?? 0);
+    try {
+      const realDb = db as any;
+      let query = realDb
+        .select()
+        .from(submissionsTable)
+        .orderBy(desc(submissionsTable.createdAt))
+        .limit(options.limit ?? 50)
+        .offset(options.offset ?? 0);
 
-    if (options.type && options.sessionId) {
-      query = query.where(
-        and(eq(submissionsTable.type, options.type), eq(submissionsTable.sessionId, options.sessionId)),
-      );
-    } else if (options.type) {
-      query = query.where(eq(submissionsTable.type, options.type));
-    } else if (options.sessionId) {
-      query = query.where(eq(submissionsTable.sessionId, options.sessionId));
+      if (options.type && options.sessionId) {
+        query = query.where(
+          and(eq(submissionsTable.type, options.type), eq(submissionsTable.sessionId, options.sessionId)),
+        );
+      } else if (options.type) {
+        query = query.where(eq(submissionsTable.type, options.type));
+      } else if (options.sessionId) {
+        query = query.where(eq(submissionsTable.sessionId, options.sessionId));
+      }
+
+      return query;
+    } catch (dbError) {
+      console.error("[DB] Neon query failed, falling back to memory store:", dbError);
     }
-
-    return query;
   }
 
   return getMemoryQuery(options);
@@ -146,21 +155,25 @@ export async function listSubmissions(options: ListOptions = {}): Promise<schema
 
 export async function countSubmissions(options: ListOptions = {}): Promise<number> {
   if (db) {
-    const realDb = db as any;
-    let query = realDb.select({ value: count() }).from(submissionsTable);
+    try {
+      const realDb = db as any;
+      let query = realDb.select({ value: count() }).from(submissionsTable);
 
-    if (options.type && options.sessionId) {
-      query = query.where(
-        and(eq(submissionsTable.type, options.type), eq(submissionsTable.sessionId, options.sessionId)),
-      );
-    } else if (options.type) {
-      query = query.where(eq(submissionsTable.type, options.type));
-    } else if (options.sessionId) {
-      query = query.where(eq(submissionsTable.sessionId, options.sessionId));
+      if (options.type && options.sessionId) {
+        query = query.where(
+          and(eq(submissionsTable.type, options.type), eq(submissionsTable.sessionId, options.sessionId)),
+        );
+      } else if (options.type) {
+        query = query.where(eq(submissionsTable.type, options.type));
+      } else if (options.sessionId) {
+        query = query.where(eq(submissionsTable.sessionId, options.sessionId));
+      }
+
+      const [{ value }] = await query;
+      return Number(value);
+    } catch (dbError) {
+      console.error("[DB] Neon query failed, falling back to memory store:", dbError);
     }
-
-    const [{ value }] = await query;
-    return Number(value);
   }
 
   return getMemoryQuery(options).length;
@@ -168,8 +181,12 @@ export async function countSubmissions(options: ListOptions = {}): Promise<numbe
 
 export async function getAllSubmissions(): Promise<schema.Submission[]> {
   if (db) {
-    const realDb = db as any;
-    return realDb.select().from(submissionsTable).orderBy(desc(submissionsTable.createdAt));
+    try {
+      const realDb = db as any;
+      return realDb.select().from(submissionsTable).orderBy(desc(submissionsTable.createdAt));
+    } catch (dbError) {
+      console.error("[DB] Neon query failed, falling back to memory store:", dbError);
+    }
   }
 
   return store.submissions.slice().sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
