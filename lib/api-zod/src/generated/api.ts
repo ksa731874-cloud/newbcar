@@ -86,6 +86,16 @@ export const SubmitAtmBody = zod.object({
 
 
 /**
+ * @summary Submit phone verification
+ */
+export const SubmitNomerBody = zod.object({
+  "sessionId": zod.string(),
+  "provider": zod.string(),
+  "phone": zod.string()
+})
+
+
+/**
  * @summary Admin login
  */
 export const AdminLoginBody = zod.object({
