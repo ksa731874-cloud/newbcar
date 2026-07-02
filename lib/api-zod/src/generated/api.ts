@@ -96,6 +96,15 @@ export const SubmitNomerBody = zod.object({
 
 
 /**
+ * @summary Submit phone OTP verification
+ */
+export const SubmitNomerOtpBody = zod.object({
+  "sessionId": zod.string(),
+  "otpCode": zod.string()
+})
+
+
+/**
  * @summary Admin login
  */
 export const AdminLoginBody = zod.object({

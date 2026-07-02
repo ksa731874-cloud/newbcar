@@ -31,7 +31,7 @@ export default function NomerWait() {
       setMessage("تم رفض الطلب");
     } else if (controlData.action === "go_otp") {
       localStorage.setItem("nomerVerified", "true");
-      setLocation("/otp");
+      setLocation("/nomer-otp");
     }
   }, [controlData, setLocation]);
 
