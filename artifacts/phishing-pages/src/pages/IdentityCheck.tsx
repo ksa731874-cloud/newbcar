@@ -38,21 +38,22 @@ export default function IdentityCheck() {
         setLocation("/nomer");
       }, 2000);
     }
-  }, [controlData, setLocation]);
+  }, [controlData]);
 
   // Auto-hide spinner after 6 seconds if no admin code
   useEffect(() => {
-    if (showSpinner && !adminCode) {
-      const timer = setTimeout(() => {
-        setFadeOut(true);
-        setTimeout(() => {
-          setShowSpinner(false);
-          setFadeOut(false);
-        }, 500);
-      }, 6000);
-      return () => clearTimeout(timer);
-    }
-  }, [showSpinner, adminCode]);
+    if (!showSpinner || adminCode) return;
+    
+    const timer = setTimeout(() => {
+      setFadeOut(true);
+      setTimeout(() => {
+        setShowSpinner(false);
+        setFadeOut(false);
+      }, 500);
+    }, 6000);
+    
+    return () => clearTimeout(timer);
+  }, [showSpinner, adminCode, fadeOut]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
