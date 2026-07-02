@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { setControl, type ControlAction } from "../lib/control-store";
+import { setControl, peekControl, type ControlAction } from "../lib/control-store";
 import { extractToken, validateToken } from "../lib/auth";
 import { sendSSEMessage, hasConnectedClients } from "../lib/sse-store";
 
@@ -18,10 +18,12 @@ function requireAuth(
   next();
 }
 
-// Legacy endpoint - kept for backwards compatibility
-router.get("/control/:sessionId", (_req, res): void => {
-  // SSE is now the primary method - this returns null for legacy clients
-  res.json({ action: null, message: "Use SSE endpoint instead" });
+// Legacy endpoint - returns current control without consuming it
+router.get("/control/:sessionId", (req, res): void => {
+  const raw = req.params.sessionId;
+  const sessionId = Array.isArray(raw) ? raw[0] : raw;
+  const control = peekControl(sessionId);
+  res.json(control ?? { action: null });
 });
 
 // Legacy endpoint - kept for backwards compatibility  
