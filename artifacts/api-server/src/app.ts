@@ -35,6 +35,17 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Global error handler - prevents unhandled errors from crashing the server
+app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("[Global Error Handler] Unhandled error:", err);
+  console.error("[Global Error Handler] Stack:", err.stack);
+  res.status(500).json({ 
+    error: "Internal server error",
+    message: err.message,
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined
+  });
+});
+
 app.use("/api", router);
 
 if (hasUiDist) {
